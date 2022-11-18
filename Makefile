@@ -6,3 +6,7 @@ run:
 
 types:
 	g++ ./tests/types.cpp -o types.exe && ./types.exe && rm -rf types.exe
+
+clear:
+	rm -rf *.o
+	rm -rf *.exe
