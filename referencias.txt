@@ -1,0 +1,2 @@
+documentação oficial linux:   https://docs.kernel.org/filesystems/ext2.html
+ext2 guia completo:           https://www.nongnu.org/ext2-doc/ext2.html
