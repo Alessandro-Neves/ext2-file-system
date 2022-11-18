@@ -1,5 +1,8 @@
 #include <cstdint>
 
+#ifndef _EXT2_H_
+#define _EXT2_H_
+
 /*
  * Estrutura do inode ixt2 - https://www.nongnu.org/ext2-doc/ext2.html#inode-table
  */
@@ -22,5 +25,7 @@ struct ext2_inode
   uint32_t i_file_acl;      /* File ACL */
   uint32_t i_dir_acl;       /* Directory ACL */
   uint32_t i_faddr;         /* Fragment address */
-  uint32_t extra[3];
+  uint32_t i_osd2[3];
 };
+
+#endif
