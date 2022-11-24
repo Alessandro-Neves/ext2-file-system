@@ -1,0 +1,11 @@
+-> Superbloco começa na posição 1024
+-> Superbloco possui o tamanho padrão de 1KiB
+
+
+
+
+
+
+
+
+-> Two blocks near the start of each group are reserved for the block usage bitmap and the inode usage bitmap which show which blocks and inodes are in use

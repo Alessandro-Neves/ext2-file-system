@@ -1,2 +1,10 @@
 documentação oficial linux:   https://docs.kernel.org/filesystems/ext2.html
-ext2 guia completo:           https://www.nongnu.org/ext2-doc/ext2.html
+
+ext2 doc :                    https://www.nongnu.org/ext2-doc/ext2.html
+ext2 pdf:                     https://www.nongnu.org/ext2-doc/ext2.pdf
+
+wiki:                         https://wiki.osdev.org/Ext2     
+
+moodle:                       https://www.science.smith.edu/~nhowe/262/oldlabs/ext2.html
+
+c std file operations:        https://terminalroot.com.br/2014/10/exemplos-de-funcoes-fread-fwrite-remove.html
