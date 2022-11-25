@@ -1,8 +1,8 @@
 -> Superbloco começa na posição 1024
 -> Superbloco possui o tamanho padrão de 1KiB
 
-
-
+-> o tamanha do bloco é da pelo s_blocks_count, seguindo a fórmula: 1024 << s_log_block_size:
+  como neste caso s_blocks_count = 0, o tamanho do bloco é 1024 bytes.
 
 
 

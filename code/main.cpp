@@ -1,7 +1,10 @@
 #include "../headers/colors.hpp"
 #include "../headers/ext2.hpp"
 #include "../headers/file-operations.hpp"
-#include "../headers/print-operations.hpp"
+#include "../headers/blocks-group-operations.hpp"
+#include "../headers/superblock-operations.hpp"
+
+#include <iostream>
 
 using namespace std;
 
@@ -9,6 +12,7 @@ int main()
 {
   FILE *file;
   Ext2_Superblock *superblock;
+  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor;
 
   try
   {
@@ -18,21 +22,20 @@ int main()
     // cin >> input;
     strcpy(input, "./ext2.img"); /* !!!! apagar antes de entregar e descomentar as duas linhas anteriores !!!! */
 
-    /* aloca memória para ler todo o superbloco */
-    Ext2_Superblock *superblock = (Ext2_Superblock *)malloc(sizeof(Ext2_Superblock));
-
     /* ler imagem ext2 do host */
-    FILE *file = get_file((const char *)input);
+    FILE *ext2_image = get_file((const char *)input);
 
-    /* posicionar o ponteiro no início do superbloco (bite 1024) */
-    fseek(file, 1024, SEEK_SET);
+    /* leitura da superbloco */
+    superblock = read_ext2_superblock(ext2_image);
 
-    /* copiar 1024 unidade de 1byte a partir da posicão atual (bite 1024)*/
-    /* copia á area do supebloco para &superbloco */
-    fread(superblock, 1, 1024, file);
+    /* leitura do descritor de grupo de blocos */
+    blocks_group_descriptor = read_ext2_blocks_group_descriptor(ext2_image);
 
     /* imprime as informações do superbloco */
     print_superblock(superblock);
+
+    /* imprime as informações do descritor de grupo de blocos */
+    print_ext2_blocks_group_descriptor(blocks_group_descriptor);
   }
   catch (const char *str) /* tratamento de exceções */
   {

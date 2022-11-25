@@ -96,4 +96,15 @@ typedef struct ext2_superblock
   uint32_t s_reserved[204]; /* Padding to the end of the block */
 } Ext2_Superblock;
 
+typedef struct ext2_blocks_group_descriptor {
+  uint32_t	bg_block_bitmap;		/* Blocks bitmap block */
+  uint32_t	bg_inode_bitmap;		/* Inodes bitmap block */
+  uint32_t	bg_inode_table;		/* Inodes table block */
+  uint16_t	bg_free_blocks_count;	/* Free blocks count */
+  uint16_t	bg_free_inodes_count;	/* Free inodes count */
+  uint16_t	bg_used_dirs_count;	/* Directories count */
+  uint16_t	bg_pad;
+  uint32_t	bg_reserved[3];
+} Ext2_Blocks_Group_Descriptor;
+
 #endif

@@ -1,14 +1,25 @@
 #include <iostream>
-
+#include "../headers/superblock-operations.hpp"
 #include "../headers/colors.hpp"
-#include "../headers/print-operations.hpp"
 
 using namespace std;
 
-/**
- * @brief imprime os dados do superbloco na saída
- * @param superblock estrutura com dados do superbloco
- */
+
+Ext2_Superblock* read_ext2_superblock(FILE* ext2_image) {
+
+    /* aloca memória para armazenar toda a estrutura do superbloco */
+    Ext2_Superblock *superblock = (Ext2_Superblock *)malloc(sizeof(Ext2_Superblock));
+
+    /* posicionar o ponteiro no início do superbloco (bite 1024) */
+    fseek(ext2_image, 1024, SEEK_SET);
+
+    /* copiar 1024 unidade de 1byte a partir da posicão atual (bite 1024)*/
+    /* copia á area do supebloco para &superbloco */
+    fread(superblock, 1, 1024, ext2_image);
+
+    return superblock;
+}
+
 void print_superblock(Ext2_Superblock* superblock){
     cout << string(BLUE) << endl << "[ Superblock infos ]" << string(DEFAULT) << endl;
     cout << "s_inodes_count:\t\t"         << superblock->s_inodes_count               << endl;
