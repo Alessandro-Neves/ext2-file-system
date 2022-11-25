@@ -11,7 +11,7 @@ Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image
 
   /* copiar 288 unidade de 1byte a partir da posicão atual (bite 2048)*/
   /* copia á area do supebloco para &superbloco */
-  fread(blocks_group_descriptor, 1, 288, ext2_image);
+  fread(blocks_group_descriptor, 1, sizeof(Ext2_Blocks_Group_Descriptor), ext2_image);
 
   /*  */
   return blocks_group_descriptor;

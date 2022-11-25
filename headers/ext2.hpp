@@ -1,6 +1,6 @@
 #include <cstdint>
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+#include <cstdlib>
 #include <unistd.h>
 #include <bits/stdc++.h>
 
@@ -33,7 +33,7 @@ typedef struct ext2_inode
   uint32_t i_dir_acl;     /* Directory ACL */
   uint32_t i_faddr;       /* Fragment address */
   uint32_t i_osd2[3];
-} Ext_Inode;
+} Ext2_Inode;
 
 // Extrutura do superbloco ext2 - referência:  https://www.science.smith.edu/~nhowe/262/oldlabs/kernel/ext2_fs.h
 typedef struct ext2_superblock

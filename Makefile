@@ -1,9 +1,9 @@
 all:
-	g++ ./code/main.cpp ./code/file-operations.cpp ./code/superblock-operations.cpp ./code/blocks-group-operations.cpp -o fs.exe
+	g++ ./code/main.cpp ./code/file-operations.cpp ./code/superblock-operations.cpp ./code/blocks-group-operations.cpp ./code/inode-operations.cpp -o fs.exe
 	./fs.exe
 
 compile:
-	g++ ./code/main.cpp ./code/file-operations.cpp ./code/superblock-operations.cpp ./code/blocks-group-operations.cpp -o fs.exe
+	g++ ./code/main.cpp ./code/file-operations.cpp ./code/superblock-operations.cpp ./code/blocks-group-operations.cpp ./code/inode-operations.cpp -o fs.exe
 
 run:
 	./fs.exe

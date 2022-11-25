@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 Ext2_Superblock* read_ext2_superblock(FILE* ext2_image) {
 
     /* aloca memória para armazenar toda a estrutura do superbloco */
@@ -15,7 +14,7 @@ Ext2_Superblock* read_ext2_superblock(FILE* ext2_image) {
 
     /* copiar 1024 unidade de 1byte a partir da posicão atual (bite 1024)*/
     /* copia á area do supebloco para &superbloco */
-    fread(superblock, 1, 1024, ext2_image);
+    fread(superblock, 1, sizeof(Ext2_Blocks_Group_Descriptor), ext2_image);
 
     return superblock;
 }
