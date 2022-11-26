@@ -7,12 +7,14 @@
 #include <fcntl.h>
 #include <string.h>
 
+#include <linux/types.h>
+
 #ifndef _EXT2_H_
 #define _EXT2_H_
 
-/*
- * Estrutura do inode ext2 - referência:  https://www.nongnu.org/ext2-doc/ext2.html#inode-table
- */
+// /*
+//  * Estrutura do inode ext2 - referência:  https://www.nongnu.org/ext2-doc/ext2.html#inode-table
+//  */
 typedef struct ext2_inode
 {
   uint16_t i_mode;        /* File mode */
@@ -45,14 +47,14 @@ typedef struct ext2_superblock
   uint32_t s_free_inodes_count;                       /* Free inodes count */
   uint32_t s_first_data_block;                        /* First Data Block */
   uint32_t s_log_block_size;                          /* Block size */
-  uint32_t s_log_frag_size;                           /* Fragment size */       /*** __s32 ***/
+  int32_t s_log_frag_size;                           /* Fragment size */       /*** __s32 ***/
   uint32_t s_blocks_per_group;                        /* # Blocks per group */
   uint32_t s_frags_per_group;                         /* # Fragments per group */
   uint32_t s_inodes_per_group;                        /* # Inodes per group */
   uint32_t s_mtime;                                   /* Mount time */
   uint32_t s_wtime;                                   /* Write time */
   uint16_t s_mnt_count;                               /* Mount count */
-  uint32_t s_max_mnt_count;                           /* Maximal mount count */ /*** __s16 ***/
+  int16_t	s_max_mnt_count;                              /* Maximal mount count */ /*** __s16 ***/
   uint16_t s_magic;                                   /* Magic signature */
   uint16_t s_state;                                   /* File system state */
   uint16_t s_errors;                                  /* Behaviour when detecting errors */
@@ -65,16 +67,6 @@ typedef struct ext2_superblock
   uint16_t s_def_resgid;                              /* Default gid for reserved blocks */
   /*
    * These fields are for EXT2_DYNAMIC_REV superblocks only.
-   *
-   * Note: the difference between the compatible feature set and
-   * the incompatible feature set is that if there is a bit set
-   * in the incompatible feature set that the kernel doesn't
-   * know about, it should refuse to mount the filesystem.
-   *
-   * e2fsck's requirements are more strict; if it doesn't know
-   * about a feature in either the compatible or incompatible
-   * feature set, it must abort and not try to meddle with
-   * things it doesn't understand...
    */
   uint32_t s_first_ino;              /* First non-reserved inode */
   uint16_t s_inode_size;             /* size of inode structure */

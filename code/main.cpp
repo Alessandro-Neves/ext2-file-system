@@ -6,6 +6,8 @@
 #include "../headers/inode-operations.hpp"
 #include "../headers/general-constants.hpp"
 
+#include <stdio.h>
+
 using namespace std;
 
 int main()
@@ -41,7 +43,6 @@ int main()
     inode = read_ext2_inode(ext2_image, blocks_group_descriptor);
 
     print_ext2_inode(inode);
-
 
   }
   catch (const char *str) /* tratamento de exceções */
