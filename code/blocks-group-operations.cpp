@@ -1,13 +1,13 @@
 #include "../headers/blocks-group-operations.hpp"
 
-Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image)
+Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image, int at_position)
 {
 
   /* aloca espaço na memória suficiente para armazenar a estrutura do Ext2_Blocks_Group_Descriptor */
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor = (Ext2_Blocks_Group_Descriptor *)malloc(sizeof(Ext2_Blocks_Group_Descriptor));
 
   /* posicionar o ponteiro no início do superbloco (bite 2048) */
-  fseek(ext2_image, 2048, SEEK_SET);
+  fseek(ext2_image, at_position, SEEK_SET);
 
   /* copiar 288 unidade de 1byte a partir da posicão atual (bite 2048)*/
   /* copia á area do supebloco para &superbloco */
@@ -18,7 +18,6 @@ Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image
 }
 
 void print_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* blocks_group_descriptor) {
-  cout << string(BLUE) << endl << "[ Blocks group descriptor infos ]" << string(DEFAULT) << endl;
   cout << "bg_block_bitmap:\t\t"          << blocks_group_descriptor->bg_block_bitmap              << endl;
   cout << "bg_inode_bitmap:\t\t"          << blocks_group_descriptor->bg_inode_bitmap              << endl;
   cout << "bg_inode_table:\t\t\t"         << blocks_group_descriptor->bg_inode_table               << endl;

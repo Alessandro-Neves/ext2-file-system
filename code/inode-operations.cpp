@@ -9,11 +9,11 @@ void print_array (uint32_t* array, int size) {
     cout << " " << array[i];
 } 
 
-Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor)
+Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, int inode_order)
 {
   Ext2_Inode *inode = (Ext2_Inode*) malloc(sizeof(Ext2_Inode));
 
-  int inode_position = BLOCK_OFFSET(block_group_descriptor->bg_inode_table) + ( (2 - 1) * sizeof(struct ext2_inode) );
+  int inode_position = BLOCK_OFFSET(block_group_descriptor->bg_inode_table) + ( (inode_order - 1) * sizeof(struct ext2_inode) );
 
   fseek(ext2_image, inode_position, SEEK_SET);
 
@@ -22,7 +22,6 @@ Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *bloc
 }
 
 void print_ext2_inode(Ext2_Inode* inode){
-  cout << string(BLUE) << endl << "[ Inode infos ]" << string(DEFAULT) << endl;
   cout << "i_mode:\t\t\t"             << (unsigned) inode->i_mode              << endl;
   cout << "i_uid:\t\t\t"              << (unsigned) inode->i_uid               << endl;
   cout << "i_size:\t\t\t"             << (unsigned) inode->i_size              << endl;

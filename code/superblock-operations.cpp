@@ -20,7 +20,6 @@ Ext2_Superblock* read_ext2_superblock(FILE* ext2_image) {
 }
 
 void print_superblock(Ext2_Superblock* superblock){
-    cout << string(BLUE) << endl << "[ Superblock infos ]" << string(DEFAULT) << endl;
     cout << "s_inodes_count:\t\t"         << (unsigned) superblock->s_inodes_count               << endl;
     cout << "s_blocks_count:\t\t"         << (unsigned) superblock->s_blocks_count               << endl;  
     cout << "s_r_blocks_count:\t"         << (unsigned) superblock->s_r_blocks_count             << endl;

@@ -5,8 +5,7 @@
 #include "../headers/blocks-group-operations.hpp"
 #include "../headers/inode-operations.hpp"
 #include "../headers/general-constants.hpp"
-
-#include <stdio.h>
+#include "../headers/directory-operations.hpp"
 
 using namespace std;
 
@@ -16,6 +15,7 @@ int main()
   Ext2_Superblock *superblock;
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor;
   Ext2_Inode *inode;
+  vector<Ext2_Directory> directories;
 
   try
   {
@@ -32,17 +32,29 @@ int main()
     superblock = read_ext2_superblock(ext2_image);
 
     /* leitura do descritor de grupo de blocos */
-    blocks_group_descriptor = read_ext2_blocks_group_descriptor(ext2_image);
+    blocks_group_descriptor = read_ext2_blocks_group_descriptor(ext2_image, 2048);
+
+    /* leitura do primeiro inode (segundo inode do primeiro descritor de blocos) */
+    inode = read_ext2_inode(ext2_image, blocks_group_descriptor, 2);
+
+    /* leitura dos diretórios raiz */
+    directories = read_ext2_directories(ext2_image, inode, blocks_group_descriptor);
 
     /* imprime as informações do superbloco */
+    cout << string(BLUE) << endl << "[ Superblock infos ]" << string(DEFAULT) << endl;
     print_superblock(superblock);
 
     /* imprime as informações do descritor de grupo de blocos */
+    cout << string(BLUE) << endl << "[ Blocks group descriptor infos ]" << string(DEFAULT) << endl;
     print_ext2_blocks_group_descriptor(blocks_group_descriptor);
 
-    inode = read_ext2_inode(ext2_image, blocks_group_descriptor);
-
+    /* imprime as informações do inode */
+    cout << string(BLUE) << endl << "[ Inode infos ]" << string(DEFAULT) << endl;
     print_ext2_inode(inode);
+
+    /* imprime as informações dos diretórios */
+    cout << string(BLUE) << endl << "[ Root Directories infos ]" << string(DEFAULT) << endl;
+    print_directories(directories);
 
   }
   catch (const char *str) /* tratamento de exceções */

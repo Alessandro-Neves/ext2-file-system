@@ -14,7 +14,7 @@ using namespace std;
  * @param ext2_image imagem do sistema de arquivos
  * @return Ext2_Blocks_Group_Descriptor* estrutura com as informações do descritor de grupo de blocos
  */
-Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image);
+Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image, int at_position);
 
 /**
  * @brief imprime os dados do descritor de grupo de blocos na saída

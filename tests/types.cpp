@@ -10,11 +10,12 @@ int main(){
   cout << "uint8:\t" << sizeof(uint8_t) << endl;
   cout << "uint16:\t" << sizeof(uint16_t) << endl;
   cout << "uint32:\t" << sizeof(uint32_t) << endl;
+  cout << "void:\t" << sizeof(void) << endl;
   return 0;
 }
 
 /*
-  unsigned char    =   uint8_t
-  unsigned short   =   uint16_t
-  unsigned int     =   uint32_t
+  sizeof(unsigned char)    =   sizeof(uint8_t) = sizeof(void)
+  sizeof(unsigned short)   =   sizeof(uint16_t)
+  sizeof(unsigned int)     =   sizeof(uint32_t)
 */

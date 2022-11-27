@@ -9,8 +9,12 @@
 
 #include <linux/types.h>
 
+#include "./general-constants.hpp"
+
 #ifndef _EXT2_H_
 #define _EXT2_H_
+
+#define BLOCK_OFFSET(block) (BASE_OFFSET + (block - 1) * BLOCK_SIZE)
 
 // /*
 //  * Estrutura do inode ext2 - referência:  https://www.nongnu.org/ext2-doc/ext2.html#inode-table
@@ -98,5 +102,18 @@ typedef struct ext2_blocks_group_descriptor {
   uint16_t	bg_pad;
   uint32_t	bg_reserved[3];
 } Ext2_Blocks_Group_Descriptor;
+
+
+#define EXT2_NAME_LEN 255
+typedef struct ext2_dir_entry
+{
+     uint32_t	inode;			/* Inode number */
+     uint16_t	rec_len;		/* Directory entry length */
+     uint8_t	name_len;		/* Name length */
+     uint8_t	file_type;
+     char	name[EXT2_NAME_LEN];	/* File name */
+} Ext2_Directory;
+
+typedef char Block[BLOCK_SIZE];
 
 #endif
