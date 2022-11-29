@@ -10,7 +10,7 @@
 Ext2FileManager::Ext2FileManager(FILE* ext2_image) {
   this->ext2_image = ext2_image;
   this->superblock = read_ext2_superblock(this->ext2_image);
-  this->blocks_group_descriptor = read_ext2_blocks_group_descriptor(this->ext2_image, 2048);
+  this->blocks_group_descriptor = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(1));
   Ext2_Inode* first_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, 2);
   vector<Ext2_Directory> directories = read_ext2_directories(this->ext2_image, first_inode);
   this->history_navigation.push_back(directories.at(0));
