@@ -1,13 +1,15 @@
 #include <iostream>
+#include <cstdbool>
 #include "../headers/inode-operations.hpp"
 #include "../headers/colors.hpp"
+#include "../headers/util-operations.hpp"
 
 using namespace std;
 
 void print_array (uint32_t* array, int size) {
   for(int i = 0; i < size; i++)
     cout << " " << array[i];
-} 
+}
 
 Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, int inode_order)
 {
@@ -41,4 +43,26 @@ void print_ext2_inode(Ext2_Inode* inode){
   cout << "i_dir_acl:\t\t"            << (unsigned) inode->i_dir_acl           << endl;
   cout << "i_faddr:\t\t"              << (unsigned) inode->i_faddr             << endl;
   cout << "i_osd2:\t\t\t"             << "["; print_array(inode->i_osd2, 3); cout << " ](3)"      << endl;
+}
+
+void print_inode_blocks_content(FILE* ext2_image, Ext2_Inode* inode) {
+  char* content = (char*) malloc (sizeof(char) * BLOCK_SIZE);
+  int position;
+
+  for(int i = 0; i < 12; i++){
+    memset(content, '\0', sizeof(content));
+    position = BLOCK_OFFSET((inode->i_block)[0]);
+
+    fseek(ext2_image, position, SEEK_SET);
+    fread(content, 1, BLOCK_SIZE, ext2_image);
+
+    cout << content;
+
+    if(has_null(content, BLOCK_SIZE)) break;
+  }
+
+  /**
+   * @todo leitura blocos inodes indiretos (13+)
+   * 
+   */
 }

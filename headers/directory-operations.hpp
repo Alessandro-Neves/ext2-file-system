@@ -5,7 +5,11 @@
 
 using namespace std;
 
-vector<Ext2_Directory> read_ext2_directories(FILE* ext2_image, Ext2_Inode* inode, Ext2_Blocks_Group_Descriptor* block_group_descriptor);
+vector<Ext2_Directory> read_ext2_directories(FILE* ext2_image, Ext2_Inode* inode);
+
+Ext2_Directory* search_directory(FILE* ext2_image, Ext2_Inode* inode, const char* searched_name);
+
+void print_directory(Ext2_Directory directory);
 
 void print_directories(vector<Ext2_Directory> directories);
 

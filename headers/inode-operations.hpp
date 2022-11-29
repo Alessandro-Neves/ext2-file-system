@@ -10,6 +10,8 @@ Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *bloc
  * @brief imprime os dados do inode na saída
  * @param inode estrutura com dados do inode
  */
-void print_ext2_inode(Ext2_Inode* blocks_group_descriptor);
+void print_ext2_inode(Ext2_Inode* inode);
+
+void print_inode_blocks_content(FILE* ext2_image, Ext2_Inode* inode);
 
 #endif

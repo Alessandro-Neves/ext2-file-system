@@ -6,16 +6,14 @@
 #include "../headers/inode-operations.hpp"
 #include "../headers/general-constants.hpp"
 #include "../headers/directory-operations.hpp"
+#include "../headers/ext2-file-manager.hpp"
 
 using namespace std;
 
 int main()
 {
-  FILE *file;
-  Ext2_Superblock *superblock;
-  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor;
-  Ext2_Inode *inode;
-  vector<Ext2_Directory> directories;
+  FILE* ext2_image;
+  Ext2FileManager *fm;
 
   try
   {
@@ -26,35 +24,34 @@ int main()
     strcpy(input, "./ext2.img"); /* !!!! apagar antes de entregar e descomentar as duas linhas anteriores !!!! */
 
     /* ler imagem ext2 do host */
-    FILE *ext2_image = get_file((const char *)input);
+    ext2_image = get_file((const char *)input);
 
-    /* leitura da superbloco */
-    superblock = read_ext2_superblock(ext2_image);
+    fm = new Ext2FileManager(ext2_image);
 
-    /* leitura do descritor de grupo de blocos */
-    blocks_group_descriptor = read_ext2_blocks_group_descriptor(ext2_image, 2048);
+    cout << endl << string(BLUE) << "superblock info:" << string(DEFAULT) << endl;
+    fm->info_superblock();  
 
-    /* leitura do primeiro inode (segundo inode do primeiro descritor de blocos) */
-    inode = read_ext2_inode(ext2_image, blocks_group_descriptor, 2);
+    cout << endl << string(BLUE) << "blocks group descriptor info:" << string(DEFAULT) << endl;
+    fm->info_blocks_group_descriptor();
 
-    /* leitura dos diretórios raiz */
-    directories = read_ext2_directories(ext2_image, inode, blocks_group_descriptor);
+    cout << endl << string(BLUE) << "root inode info:" << string(DEFAULT) << endl;
+    fm->info_inode();
 
-    /* imprime as informações do superbloco */
-    cout << string(BLUE) << endl << "[ Superblock infos ]" << string(DEFAULT) << endl;
-    print_superblock(superblock);
+    cout << endl << string(BLUE) << "ls /:" << string(DEFAULT) << endl;
+    fm->ls();
 
-    /* imprime as informações do descritor de grupo de blocos */
-    cout << string(BLUE) << endl << "[ Blocks group descriptor infos ]" << string(DEFAULT) << endl;
-    print_ext2_blocks_group_descriptor(blocks_group_descriptor);
+    cout << endl << string(BLUE) << "lendo conteudo de ./hello.txt :" << string(DEFAULT)<< endl;
+    fm->cat("hello.txt");
 
-    /* imprime as informações do inode */
-    cout << string(BLUE) << endl << "[ Inode infos ]" << string(DEFAULT) << endl;
-    print_ext2_inode(inode);
+    cout << endl << string(BLUE) << "navegando para ./lost+found :" << string(DEFAULT)<< endl;
+    fm->cd("lost+found");
 
-    /* imprime as informações dos diretórios */
-    cout << string(BLUE) << endl << "[ Root Directories infos ]" << string(DEFAULT) << endl;
-    print_directories(directories);
+    cout << endl << string(BLUE) << "inode ./lost+found :" << string(DEFAULT)<< endl;
+    fm->info_inode();
+
+
+    cout << endl << string(BLUE) << "ls ./lost+found :" << string(DEFAULT)<< endl;
+    fm->ls();
 
   }
   catch (const char *str) /* tratamento de exceções */
