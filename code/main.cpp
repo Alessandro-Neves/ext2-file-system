@@ -43,14 +43,14 @@ int main()
     cout << endl << string(BLUE) << "lendo conteudo de ./hello.txt :" << string(DEFAULT)<< endl;
     fm->cat("hello.txt");
 
-    cout << endl << string(BLUE) << "navegando para ./lost+found :" << string(DEFAULT)<< endl;
-    fm->cd("lost+found");
+    cout << endl << string(BLUE) << "navegando para ./livros :" << string(DEFAULT)<< endl;
+    fm->cd("livros");
 
-    cout << endl << string(BLUE) << "inode ./lost+found :" << string(DEFAULT)<< endl;
+    cout << endl << string(BLUE) << "inode ./livros :" << string(DEFAULT)<< endl;
     fm->info_inode();
 
 
-    cout << endl << string(BLUE) << "ls ./lost+found :" << string(DEFAULT)<< endl;
+    cout << endl << string(BLUE) << "ls ./livros :" << string(DEFAULT)<< endl;
     fm->ls();
 
   }

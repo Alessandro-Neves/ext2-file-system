@@ -17,6 +17,11 @@ Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image
   return blocks_group_descriptor;
 }
 
+unsigned int block_group_from_inode(Ext2_Superblock* superblock, unsigned int inode) {
+  unsigned int inodes_per_block_group = superblock->s_inodes_per_group;
+  return ( inode / inodes_per_block_group ) + 1;
+}
+
 unsigned int blocks_group_count(Ext2_Superblock* superblock) {
   return (unsigned) 1 + (superblock->s_blocks_count - 1) / superblock->s_blocks_per_group;
 }

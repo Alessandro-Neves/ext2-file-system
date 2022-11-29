@@ -26,6 +26,10 @@ unsigned int blocks_group_count(Ext2_Superblock* superblock);
 
 unsigned int size_of_blocks_group_descriptor_list(Ext2_Superblock* superblock);
 
+unsigned int block_group_descripton_from_inode(Ext2_Superblock* superblock, unsigned int inode_order);
+
 uint32_t block_group_descriptor_address(int order);
+
+unsigned int block_group_from_inode(Ext2_Superblock* superblock, unsigned int inode_order);
 
 #endif

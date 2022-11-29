@@ -11,7 +11,7 @@ void print_array (uint32_t* array, int size) {
     cout << " " << array[i];
 }
 
-Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, int inode_order)
+Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, unsigned int inode_order)
 {
   Ext2_Inode *inode = (Ext2_Inode*) malloc(sizeof(Ext2_Inode));
 
@@ -21,6 +21,10 @@ Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *bloc
 
   fread(inode, 1, sizeof(Ext2_Inode), ext2_image);
   return inode;
+}
+
+unsigned int inode_order_on_block_group(Ext2_Superblock* superblock, uint32_t inode) {
+  return (unsigned int) inode % superblock->s_inodes_per_group;
 }
 
 void print_ext2_inode(Ext2_Inode* inode){
