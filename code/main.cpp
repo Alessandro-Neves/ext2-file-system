@@ -53,39 +53,6 @@ int main()
 
     fm = new Ext2FileManager(ext2_image);
 
-    // cout << endl << string(BLUE) << "superblock info:" << string(DEFAULT) << endl;
-    // fm->info_superblock();  
-
-    // cout << endl << string(BLUE) << "blocks group descriptor info:" << string(DEFAULT) << endl;
-    // fm->info_blocks_group_descriptor();
-
-    // cout << endl << string(BLUE) << "root inode info:" << string(DEFAULT) << endl;
-    // fm->info_inode();
-
-    // cout << endl << string(BLUE) << "ls /:" << string(DEFAULT) << endl;
-    // fm->ls();
-
-    // cout << endl << string(BLUE) << "lendo conteudo de ./hello.txt :" << string(DEFAULT)<< endl;
-    // fm->cat("hello.txt");
-
-    // cout << endl << string(BLUE) << "navegando para ./livros :" << string(DEFAULT)<< endl;
-    // fm->cd("livros");
-
-    // cout << endl << string(BLUE) << "inode ./livros :" << string(DEFAULT)<< endl;
-    // fm->info_inode();
-
-    // cout << endl << string(BLUE) << "ls ./livros :" << string(DEFAULT)<< endl;
-    // fm->ls();
-
-    // cout << endl << string(BLUE) << "cd ./livros/religiosos:" << string(DEFAULT)<< endl;
-    // fm->cd("religiosos");
-
-    // cout << endl << string(BLUE) << "ls ./livros/religiosos:" << string(DEFAULT)<< endl;
-    // fm->ls();
-
-    // cout << endl << string(BLUE) << "cat ./livros/religiosos/Biblia.txt:" << string(DEFAULT)<< endl;
-    // fm->cat("Biblia.txt");
-
     shell(fm);
 
   }
@@ -93,10 +60,10 @@ int main()
   {
     cout << string(RED) << str << string(DEFAULT) << endl;
   }
-  // catch (...)
-  // {
-  //   cout << string(RED) << "[ Unespected error ]" << string(DEFAULT) << endl;
-  // }
+  catch (...)
+  {
+    cout << string(RED) << "[ Unespected error ]" << string(DEFAULT) << endl;
+  }
 
   return 0;
 }
