@@ -65,6 +65,7 @@ void print_inode_blocks_content(FILE* ext2_image, Ext2_Inode* inode) {
     if(has_null(content, BLOCK_SIZE)) break;
   }
 
+
   /**
    * @todo leitura blocos inodes indiretos (13+)
    * 

@@ -23,6 +23,7 @@ class Ext2FileManager {
   bool cd(const char *directory_name);
   bool cat(const char *directory_name);
   void ls();
+  std::string pwd();
   Ext2FileManager(FILE *ext2_image);
 };
 

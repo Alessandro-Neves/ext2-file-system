@@ -105,7 +105,7 @@ typedef struct ext2_blocks_group_descriptor {
 
 
 #define EXT2_NAME_LEN 255
-typedef struct ext2_dir_entry
+typedef struct ext2_directory
 {
      uint32_t	inode;			/* Inode number */
      uint16_t	rec_len;		/* Directory entry length */
