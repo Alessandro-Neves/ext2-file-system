@@ -10,7 +10,7 @@
 Ext2FileManager::Ext2FileManager(FILE* ext2_image) {
   this->ext2_image = ext2_image;
   this->superblock = read_ext2_superblock(this->ext2_image);
-  this->blocks_group_descriptor = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(1));
+  this->blocks_group_descriptor = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(0));
   Ext2_Inode* first_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, 2);
   vector<Ext2_Directory> directories = read_ext2_directories(this->ext2_image, first_inode);
   this->history_navigation.push_back(directories.at(0));
@@ -18,12 +18,20 @@ Ext2FileManager::Ext2FileManager(FILE* ext2_image) {
 
 bool Ext2FileManager::cd(const char* directory_name) {
 
-  if(!std::strcmp(directory_name, ".")) return true;
+  if(!std::strcmp(directory_name, ".")) {
+    print_directory(this->history_navigation.back());
+    return true;
+  }
+  if(!std::strcmp(directory_name, "..") && this->history_navigation.size() == 1)  {
+    std::cout << std::string(BOLD) << "no directories to go back" << std::string(DEFAULT) << std::endl;
+    return true;
+  }
   if(!std::strcmp(directory_name, "..")) {
     this->history_navigation.pop_back();
-    Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
+    Ext2_Directory actual_directory = this->history_navigation.back();
     unsigned int directory_inode_block_group = block_group_from_inode(this->superblock, actual_directory.inode);
     this->blocks_group_descriptor = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));
+    print_directory(this->history_navigation.back());
     return true;
   }
 
@@ -37,6 +45,7 @@ bool Ext2FileManager::cd(const char* directory_name) {
   this->blocks_group_descriptor = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));
 
   this->history_navigation.push_back(*directory);
+  print_directory(this->history_navigation.back());
 
   return true;
 }
@@ -71,10 +80,11 @@ void Ext2FileManager::info_blocks_group_descriptor() {
   print_ext2_blocks_group_descriptor(this->blocks_group_descriptor);
 }
 
-void Ext2FileManager::info_inode() {
-  Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
-  Ext2_Inode* actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, 2);
-  print_ext2_inode(actual_inode);
+void Ext2FileManager::info_inode(unsigned int inode) {
+  unsigned int inode_block_group = block_group_from_inode(this->superblock, inode);
+  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(inode_block_group));
+  Ext2_Inode* found_inode = read_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode);
+  print_ext2_inode(found_inode);
 }
 
 std::string Ext2FileManager::pwd() {

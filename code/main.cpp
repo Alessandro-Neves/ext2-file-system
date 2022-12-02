@@ -14,8 +14,9 @@ void shell (Ext2FileManager* fm) {
 
   while(1){
     fflush(stdout);
-    std::cout << std::endl << "[ " << fm->pwd() << " ]>  ";
+    std::cout << std::endl << "[ " << fm->pwd() << " ]>  " << string(BLUE);
     std::getline(std::cin, input);
+    std::cout << std::string(DEFAULT) << std::endl;
 
     operation = input.substr(0, input.find(" "));
 
@@ -30,6 +31,14 @@ void shell (Ext2FileManager* fm) {
 
     else if(!std::strcmp(operation.c_str(), "cat"))
       fm->cat(argument.c_str());
+
+    else if(!std::strcmp(operation.c_str(), "print-inode")){
+      int inode = std::stoi(argument);
+      fm->info_inode(inode);
+    }
+
+    else if(!std::strcmp(operation.c_str(), "clear"))
+      system("clear");
 
     else std::cout << "comand not found !" << std::endl;
   }
@@ -60,10 +69,10 @@ int main()
   {
     cout << string(RED) << str << string(DEFAULT) << endl;
   }
-  catch (...)
-  {
-    cout << string(RED) << "[ Unespected error ]" << string(DEFAULT) << endl;
-  }
+  // catch (...)
+  // {
+  //   cout << string(RED) << "[ Unespected error ]" << string(DEFAULT) << endl;
+  // }
 
   return 0;
 }

@@ -19,11 +19,11 @@ Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image
 
 unsigned int block_group_from_inode(Ext2_Superblock* superblock, unsigned int inode) {
   unsigned int inodes_per_block_group = superblock->s_inodes_per_group;
-  return ( (inode - 1) / inodes_per_block_group ) + 1;
+  return ( (inode - 1) / inodes_per_block_group );
 }
 
 unsigned int blocks_group_count(Ext2_Superblock* superblock) {
-  return (unsigned) 1 + (superblock->s_blocks_count - 1) / superblock->s_blocks_per_group;
+  return (unsigned) (superblock->s_blocks_count - 1) / superblock->s_blocks_per_group;
 }
 
 unsigned int size_of_blocks_group_descriptor_list(Ext2_Superblock* superblock){
@@ -33,7 +33,7 @@ unsigned int size_of_blocks_group_descriptor_list(Ext2_Superblock* superblock){
 }
 
 uint32_t block_group_descriptor_address(int order) {
-  return (unsigned int) 2048 + (sizeof(Ext2_Blocks_Group_Descriptor) * (order - 1));
+  return (unsigned int) 2048 + (sizeof(Ext2_Blocks_Group_Descriptor) * (order));
 }
 
 void print_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* blocks_group_descriptor) {

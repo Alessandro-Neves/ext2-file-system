@@ -55,11 +55,16 @@ Ext2_Directory* search_directory(FILE* ext2_image, Ext2_Inode* inode, const char
 }
 
 void print_directory(Ext2_Directory directory){
-  cout << setw(6) << (unsigned) directory.inode  << "\t\t" <<  directory.name  << endl;
+  cout << string(BOLD) <<  directory.name << string(DEFAULT) << endl;
+  cout << "inode:\t\t\t" << (unsigned) directory.inode << endl;
+  cout << "record lenght:\t\t" << (unsigned) directory.rec_len << endl;
+  cout << "name lenght:\t\t" << (unsigned) directory.name_len << endl;
+  cout << "file type:\t\t" << directory.file_type << endl;
 }
 
 void print_directories(vector<Ext2_Directory> directories) {
   for(vector<Ext2_Directory>::iterator it = directories.begin(); it != directories.end(); it++){
     print_directory(*it);
+    cout << endl;
   }
 }
