@@ -21,7 +21,7 @@ void shell (Ext2FileManager* fm) {
     operation = input.substr(0, input.find(" "));
 
     int pos = input.find(" ") + 1;
-    argument = input.substr(pos, argument.length() - pos);
+    argument = input.substr(pos, input.length() - pos);
 
     if(!std::strcmp(operation.c_str(), "cd"))  
       fm->cd(argument.c_str());
