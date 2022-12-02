@@ -58,12 +58,14 @@ void Ext2FileManager::ls() {
 }
 
 bool Ext2FileManager::cat(const char* directory_name) {
+  cout << "entrou";
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
   Ext2_Inode* actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
 
   Ext2_Directory* directory = search_directory(this->ext2_image, actual_inode, directory_name);
-
   if(!directory)  return false;
+
+  cout << "achou";
 
   unsigned int directory_inode_block_group = block_group_from_inode(this->superblock, directory->inode);
   Ext2_Blocks_Group_Descriptor* bgd_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));

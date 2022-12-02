@@ -51,7 +51,7 @@ void print_ext2_inode(Ext2_Inode* inode){
 
 void print_inode_blocks_content(FILE* ext2_image, Ext2_Inode* inode) {
   char* content = (char*) malloc (sizeof(char) * BLOCK_SIZE);
-  int position;
+  uint32_t position;
 
   for(int i = 0; i < 12; i++){
     memset(content, '\0', sizeof(content));
