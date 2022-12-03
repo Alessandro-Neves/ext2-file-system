@@ -58,19 +58,18 @@ void Ext2FileManager::ls() {
 }
 
 bool Ext2FileManager::cat(const char* directory_name) {
-  cout << "entrou";
+
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
   Ext2_Inode* actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
 
   Ext2_Directory* directory = search_directory(this->ext2_image, actual_inode, directory_name);
   if(!directory)  return false;
 
-  cout << "achou";
-
   unsigned int directory_inode_block_group = block_group_from_inode(this->superblock, directory->inode);
+  cout << "cat:: reading " << directory_inode_block_group << endl;  
   Ext2_Blocks_Group_Descriptor* bgd_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));
 
-  Ext2_Inode* directory_inode = read_ext2_inode(this->ext2_image, bgd_of_inode, directory->inode);
+  Ext2_Inode* directory_inode = read_ext2_inode(this->ext2_image, bgd_of_inode, inode_order_on_block_group(this->superblock, directory->inode));
   print_inode_blocks_content(this->ext2_image, directory_inode);
 }
 
@@ -84,8 +83,10 @@ void Ext2FileManager::info_blocks_group_descriptor() {
 
 void Ext2FileManager::info_inode(unsigned int inode) {
   unsigned int inode_block_group = block_group_from_inode(this->superblock, inode);
+  unsigned int bgd = block_group_from_inode(this->superblock, inode);
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(inode_block_group));
-  Ext2_Inode* found_inode = read_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode);
+  print_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode);
+  Ext2_Inode* found_inode = read_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode_order_on_block_group(this->superblock, inode));
   print_ext2_inode(found_inode);
 }
 

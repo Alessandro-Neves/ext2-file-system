@@ -4,6 +4,8 @@
     "string": "cpp",
     "ostream": "cpp",
     "*.tcc": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "initializer_list": "cpp",
+    "valarray": "cpp"
   }
 }

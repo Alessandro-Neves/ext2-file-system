@@ -9,7 +9,6 @@
 #include "../headers/ext2-file-manager.hpp"
 
 void shell (Ext2FileManager* fm) {
-  system("clear");
   std::string input, operation, argument;
 
   while(1){
@@ -61,6 +60,10 @@ int main()
     ext2_image = get_file((const char *)input);
 
     fm = new Ext2FileManager(ext2_image);
+
+    // fm->cd("livros");
+    // fm->cd("religiosos");
+    // fm->cat("Biblia.txt");
 
     shell(fm);
 
