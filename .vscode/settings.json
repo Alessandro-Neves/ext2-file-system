@@ -6,6 +6,7 @@
     "*.tcc": "cpp",
     "vector": "cpp",
     "initializer_list": "cpp",
-    "valarray": "cpp"
+    "valarray": "cpp",
+    "iosfwd": "cpp"
   }
 }
