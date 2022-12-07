@@ -36,6 +36,10 @@ void shell (Ext2FileManager* fm) {
       fm->info_inode(inode);
     }
 
+    else if(!std::strcmp(operation.c_str(), "print-superblock")){
+      fm->info_superblock();
+    }
+
     else if(!std::strcmp(operation.c_str(), "clear"))
       system("clear");
 

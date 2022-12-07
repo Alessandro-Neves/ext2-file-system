@@ -59,7 +59,7 @@ void print_directory(Ext2_Directory directory){
   cout << "inode:\t\t\t" << (unsigned) directory.inode << endl;
   cout << "record lenght:\t\t" << (unsigned) directory.rec_len << endl;
   cout << "name lenght:\t\t" << (unsigned) directory.name_len << endl;
-  cout << "file type:\t\t" << directory.file_type << endl;
+  cout << "file type:\t\t" << (unsigned) directory.file_type << endl;
 }
 
 void print_directories(vector<Ext2_Directory> directories) {

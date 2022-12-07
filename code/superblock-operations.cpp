@@ -35,7 +35,7 @@ void print_superblock(Ext2_Superblock* superblock){
     cout << "s_wtime:\t\t"                << (unsigned) superblock->s_wtime                      << endl;
     cout << "s_mnt_count:\t\t"            << (unsigned) superblock->s_mnt_count                  << endl;
     cout << "s_max_mnt_count:\t"          << (unsigned) superblock->s_max_mnt_count              << endl;
-    cout << "s_magic:\t\t"                << superblock->s_magic                      << endl;
+    cout << "s_magic:\t\t"                << std::hex << std::uppercase << superblock->s_magic   << std::dec << endl;
     cout << "s_state:\t\t"                << (unsigned) superblock->s_state                      << endl;
     cout << "s_errors:\t\t"               << (unsigned) superblock->s_errors                     << endl;
 

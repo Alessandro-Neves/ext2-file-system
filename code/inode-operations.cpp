@@ -33,7 +33,7 @@ unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t in
 
 void print_ext2_inode(Ext2_Inode *inode)
 {
-  cout << "i_mode:\t\t\t" << inode->i_mode << endl;
+  cout << "i_mode:\t\t\t" << std::hex << std::uppercase << (unsigned) inode->i_mode << std::dec << endl;
   cout << "i_uid:\t\t\t" << (unsigned)inode->i_uid << endl;
   cout << "i_size:\t\t\t" << (unsigned)inode->i_size << endl;
   cout << "i_atime:\t\t" << (unsigned)inode->i_atime << endl;
