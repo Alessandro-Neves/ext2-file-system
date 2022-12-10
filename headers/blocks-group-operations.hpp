@@ -1,5 +1,4 @@
 #include <stdlib.h>
-
 #include "./ext2.hpp"
 #include "./colors.hpp"
 

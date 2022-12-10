@@ -11,4 +11,6 @@
  */
 FILE *get_file(const char *address);
 
+void shift_bytes(FILE* ext2_image, uint32_t position, unsigned int qtd_bytes, unsigned int offset);
+
 #endif

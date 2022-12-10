@@ -7,13 +7,18 @@
 #include "../headers/general-constants.hpp"
 #include "../headers/directory-operations.hpp"
 #include "../headers/ext2-file-manager.hpp"
+#include "../headers/error.hpp"
 
-void shell (Ext2FileManager* fm) {
+void shell(Ext2FileManager *fm)
+{
   std::string input, operation, argument;
 
-  while(1){
+  while (1)
+  {
+    try {
     fflush(stdout);
-    std::cout << std::endl << "[ " << fm->pwd() << " ]>  " << string(BLUE);
+    std::cout << std::endl
+              << "[ " << fm->pwd() << " ]>  " << string(BLUE);
     std::getline(std::cin, input);
     std::cout << std::string(DEFAULT) << std::endl;
 
@@ -22,34 +27,62 @@ void shell (Ext2FileManager* fm) {
     int pos = input.find(" ") + 1;
     argument = input.substr(pos, input.length() - pos);
 
-    if(!std::strcmp(operation.c_str(), "cd"))  
+    if (!std::strcmp(operation.c_str(), "cd"))
       fm->cd(argument.c_str());
-    
-    else if(!std::strcmp(operation.c_str(), "ls"))
+
+    else if (!std::strcmp(operation.c_str(), "ls"))
       fm->ls();
 
-    else if(!std::strcmp(operation.c_str(), "cat"))
+    else if (!std::strcmp(operation.c_str(), "cat"))
       fm->cat(argument.c_str());
 
-    else if(!std::strcmp(operation.c_str(), "print-inode")){
+    else if (!std::strcmp(operation.c_str(), "print-inode"))
+    {
       int inode = std::stoi(argument);
       fm->info_inode(inode);
     }
 
-    else if(!std::strcmp(operation.c_str(), "print-superblock")){
+    else if (!std::strcmp(operation.c_str(), "print-superblock"))
+    {
       fm->info_superblock();
     }
 
-    else if(!std::strcmp(operation.c_str(), "clear"))
+    else if (!std::strcmp(operation.c_str(), "print-bgd"))
+    {
+      fm->info_blocks_group_descriptor();
+    }
+
+    else if (!std::strcmp(operation.c_str(), "touch"))
+    {
+      fm->touch(argument.c_str(), argument.size());
+    }
+
+    else if (!std::strcmp(operation.c_str(), "clear"))
       system("clear");
 
-    else std::cout << "comand not found !" << std::endl;
+    else if (!std::strcmp(operation.c_str(), "rename"))
+    {
+
+      std::string directory_name = argument.substr(0, argument.find(" "));
+
+      int prox = argument.find(" ") + 1;
+      std::string new_directory_name = argument.substr(prox, argument.length() - prox);
+
+      if (!fm->rename(directory_name.c_str(), new_directory_name.c_str(), new_directory_name.size()))
+        throw "directory or file not found";
+    }
+
+    else  throw new FileManagerInfo("command not found");
+    
+    } catch (FileManagerInfo* file_manager_info) {
+      std::cout << file_manager_info->message << endl;
+    }
   }
 }
 
 int main()
 {
-  FILE* ext2_image;
+  FILE *ext2_image;
   Ext2FileManager *fm;
 
   try
@@ -70,16 +103,15 @@ int main()
     // fm->cat("Biblia.txt");
 
     shell(fm);
-
   }
   catch (const char *str) /* tratamento de exceções */
   {
     cout << string(RED) << str << string(DEFAULT) << endl;
   }
-  // catch (...)
-  // {
-  //   cout << string(RED) << "[ Unespected error ]" << string(DEFAULT) << endl;
-  // }
+  catch (Error* error)
+  {
+    cout << endl << string(RED) << "[ error::" << error->message << " ]" << string(DEFAULT) << endl;
+  }
 
   return 0;
 }

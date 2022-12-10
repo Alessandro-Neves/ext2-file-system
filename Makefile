@@ -1,6 +1,7 @@
 all:
-	g++ ./code/main.cpp ./code/file-operations.cpp ./code/superblock-operations.cpp ./code/blocks-group-operations.cpp ./code/inode-operations.cpp ./code/directory-operations.cpp ./code/util-operations.cpp ./code/ext2-file-manager.cpp  -o fs.exe
+	g++ ./code/main.cpp ./code/file-operations.cpp ./code/superblock-operations.cpp ./code/blocks-group-operations.cpp ./code/inode-operations.cpp ./code/directory-operations.cpp ./code/util-operations.cpp ./code/ext2-file-manager.cpp -o fs.exe
 	clear
+	make image-restore
 	./fs.exe
 
 compile:

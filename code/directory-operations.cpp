@@ -54,6 +54,29 @@ Ext2_Directory* search_directory(FILE* ext2_image, Ext2_Inode* inode, const char
   return directory;
 }
 
+Ext2_Directory* search_directory_and_position(FILE* ext2_image, Ext2_Inode* inode, const char* searched_name, unsigned int* store_position_of_directory_on_block){
+  Ext2_Directory* directory = NULL;
+
+  vector<Ext2_Directory> directories = read_ext2_directories(ext2_image, inode);
+
+  unsigned int position = 0;
+  
+  for(vector<Ext2_Directory>::iterator it = directories.begin(); it != directories.end(); it++){
+    const char* iterator_directory_name = (const char*) (*it).name;
+    if(!strcmp(searched_name, iterator_directory_name)){
+      directory = (Ext2_Directory*) malloc(sizeof(Ext2_Directory));
+      memcpy(directory, &(*it), sizeof(Ext2_Directory));
+      break;
+    }
+
+    position += (*it).rec_len;
+  }
+
+  if(directory) (*store_position_of_directory_on_block) = position;
+    
+  return directory;
+}
+
 void print_directory(Ext2_Directory directory){
   cout << string(BOLD) <<  directory.name << string(DEFAULT) << endl;
   cout << "inode:\t\t\t" << (unsigned) directory.inode << endl;

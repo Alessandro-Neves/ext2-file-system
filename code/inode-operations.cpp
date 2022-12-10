@@ -28,7 +28,7 @@ Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *bloc
 
 unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t inode)
 {
-  return (unsigned int)inode % superblock->s_inodes_per_group;
+  return (unsigned int) inode % superblock->s_inodes_per_group;
 }
 
 void print_ext2_inode(Ext2_Inode *inode)
