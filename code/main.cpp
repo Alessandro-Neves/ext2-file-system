@@ -27,19 +27,19 @@ void shell(Ext2FileManager *fm)
     int pos = input.find(" ") + 1;
     argument = input.substr(pos, input.length() - pos);
 
-    if (!std::strcmp(operation.c_str(), "cd"))
-      fm->cd(argument.c_str());
+    if (!std::strcmp(operation.c_str(), "cd")) //ok
+      fm->cd(argument.c_str()); 
 
-    else if (!std::strcmp(operation.c_str(), "ls"))
+    else if (!std::strcmp(operation.c_str(), "ls")) // Ok
       fm->ls();
 
-    else if (!std::strcmp(operation.c_str(), "cat"))
-      fm->cat(argument.c_str());
+    else if (!std::strcmp(operation.c_str(), "cat")) //ok
+      fm->cat(argument.c_str()); 
 
-    else if (!std::strcmp(operation.c_str(), "print-inode"))
+    else if (!std::strcmp(operation.c_str(), "print-inode")) //ok
     {
       int inode = std::stoi(argument);
-      fm->info_inode(inode);
+      fm->info_inode(inode);  
     }
 
     else if (!std::strcmp(operation.c_str(), "print-superblock"))

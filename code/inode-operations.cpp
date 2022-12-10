@@ -33,28 +33,34 @@ unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t in
 
 void print_ext2_inode(Ext2_Inode *inode)
 {
-  cout << "i_mode:\t\t\t" << std::hex << std::uppercase << (unsigned) inode->i_mode << std::dec << endl;
-  cout << "i_uid:\t\t\t" << (unsigned)inode->i_uid << endl;
-  cout << "i_size:\t\t\t" << (unsigned)inode->i_size << endl;
-  cout << "i_atime:\t\t" << (unsigned)inode->i_atime << endl;
-  cout << "i_ctime:\t\t" << (unsigned)inode->i_ctime << endl;
-  cout << "i_mtime:\t\t" << (unsigned)inode->i_mtime << endl;
-  cout << "i_dtime:\t\t" << (unsigned)inode->i_dtime << endl;
-  cout << "i_gid:\t\t\t" << (unsigned)inode->i_gid << endl;
-  cout << "i_links_count:\t\t" << (unsigned)inode->i_links_count << endl;
-  cout << "i_gid:\t\t\t" << (unsigned)inode->i_gid << endl;
-  cout << "i_flags:\t\t" << (unsigned)inode->i_flags << endl;
-  cout << "i_blocks:\t\t" << (unsigned)inode->i_blocks << endl;
-  cout << "osd1:\t\t\t" << (unsigned)inode->osd1 << endl;
-  cout << "i_block:\t\t"
+  cout << "file format and acess rights:\t\t\t" << std::hex << std::uppercase << (unsigned) inode->i_mode << std::dec << endl;
+  cout << "user id:\t\t\t" << (unsigned)inode->i_uid << endl;
+  cout << "lower 32-bit file size:\t\t\t" << (unsigned)inode->i_size << endl;
+  cout << "acess time:\t\t" << (unsigned)inode->i_atime << endl;
+  cout << "creation time:\t\t" ;
+  print_time_from_unix(unsigned)inode->i_ctime);
+
+  cout << "modification time:\t\t" << (unsigned)inode->i_mtime << endl;
+  print_time_from_unix(unsigned)inode->i_mtime);
+
+  cout << "deletion time:\t\t" << (unsigned)inode->i_dtime << endl;
+  print_time_from_unix(unsigned)inode->i_dtime);
+  
+  cout << "group id:\t\t\t" << (unsigned)inode->i_gid << endl;
+  cout << "link count inode:\t\t" << (unsigned)inode->i_links_count << endl;
+  //cout << "i_gid:\t\t\t" << (unsigned)inode->i_gid << endl; // gid de novo 
+  cout << "512-bytes blocks:\t\t" << (unsigned)inode->i_blocks << endl;
+  cout << "ext2 flags:\t\t" << (unsigned)inode->i_flags << endl;
+  cout << "reserved (Linux):\t\t\t" << (unsigned)inode->osd1 << endl;
+  cout << "i_block:\t\t" // arrumar aqui
        << "[";
   print_array(inode->i_block, 15);
   cout << " ](15)" << endl;
-  cout << "i_generation:\t\t" << (unsigned)inode->i_generation << endl;
-  cout << "i_file_acl:\t\t" << (unsigned)inode->i_file_acl << endl;
-  cout << "i_dir_acl:\t\t" << (unsigned)inode->i_dir_acl << endl;
-  cout << "i_faddr:\t\t" << (unsigned)inode->i_faddr << endl;
-  cout << "i_osd2:\t\t\t"
+  cout << "file version:\t\t" << (unsigned)inode->i_generation << endl;
+  cout << "block number extended attributes:\t\t" << (unsigned)inode->i_file_acl << endl;
+  cout << "higher 32-bit file size:\t\t" << (unsigned)inode->i_dir_acl << endl;
+  cout << "location file fragment:\t\t" << (unsigned)inode->i_faddr << endl;
+  cout << "96-bit OS dependant structure:\t\t\t"
        << "[";
   print_array(inode->i_osd2, 3);
   cout << " ](3)" << endl;
