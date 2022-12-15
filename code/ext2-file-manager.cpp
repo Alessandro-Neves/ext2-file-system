@@ -192,6 +192,39 @@ void Ext2FileManager::info_inode(unsigned int inode)
   print_ext2_inode(found_inode);
 }
 
+void Ext2FileManager::print_block_bitmap(){
+  uint32_t bitmap_absolut_position = BLOCK_OFFSET(this->blocks_group_descriptor->bg_block_bitmap);
+  unsigned int blocks_per_group = this->superblock->s_blocks_per_group;
+
+  unsigned int bitsmap_size_as_bytes = ( blocks_per_group / 8 );
+
+  char* bitmap = (char*)malloc(sizeof(char) * bitsmap_size_as_bytes);
+
+  fseek(this->ext2_image, bitmap_absolut_position, SEEK_SET);
+  fread(bitmap, 1, bitsmap_size_as_bytes, this->ext2_image);
+
+  /* corrigir inversão bitmap */
+  bool aux[8];
+  for(int index = 0; index < bitsmap_size_as_bytes; index++){
+    int x = 0;
+    for(int i = 7; i >= 0; i++){
+      aux[x] = ((bool*)bitmap[index])[i];
+      x++;
+    }
+
+    for(int i = 0; i < 8; i++)
+      ((bool*) bitmap[index])[i] = aux[x];
+  }
+
+  for(int index = 0; index < bitsmap_size_as_bytes; index++){
+    cout << index << ":  ";
+    for(int i = 0; i < 8; i++){
+      cout << (bool) ((bitmap[index] >> i) & 1) << "  ";
+    }
+    cout << endl;
+  }
+}
+
 std::string Ext2FileManager::pwd()
 {
   std::string str;

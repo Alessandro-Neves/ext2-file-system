@@ -25,6 +25,10 @@ class Ext2FileManager {
   void touch(const char *directory_name, unsigned int directory_name_length);
   bool rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length);
   void ls();
+
+  public:
+  void print_block_bitmap();
+
   std::string pwd();
   Ext2FileManager(FILE *ext2_image);
 };

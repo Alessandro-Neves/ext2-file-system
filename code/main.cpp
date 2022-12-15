@@ -57,6 +57,9 @@ void shell(Ext2FileManager *fm)
       fm->touch(argument.c_str(), argument.size());
     }
 
+    else if (!std::strcmp(operation.c_str(), "print-block-bitmap"))
+      fm->print_block_bitmap();
+
     else if (!std::strcmp(operation.c_str(), "clear"))
       system("clear");
 
@@ -102,7 +105,9 @@ int main()
     // fm->cd("religiosos");
     // fm->cat("Biblia.txt");
 
-    shell(fm);
+    fm->print_block_bitmap();
+
+    // shell(fm);
   }
   catch (const char *str) /* tratamento de exceções */
   {
