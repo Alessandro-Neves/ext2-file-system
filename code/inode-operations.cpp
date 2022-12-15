@@ -239,6 +239,8 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
   if (!_print_array_of_blocks(ext2_image, inode->i_block, 12, &bytes_to_read, &blocks_read, inode->i_size))
     return;
 
+  return;
+
   /* impressão niveis simples de indexes */
   position = BLOCK_OFFSET((inode->i_block)[12]);
   fseek(ext2_image, position, SEEK_SET);
