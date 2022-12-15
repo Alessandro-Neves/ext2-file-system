@@ -7,6 +7,8 @@
     "vector": "cpp",
     "initializer_list": "cpp",
     "valarray": "cpp",
-    "iosfwd": "cpp"
+    "iosfwd": "cpp",
+    "array": "cpp",
+    "string_view": "cpp"
   }
 }

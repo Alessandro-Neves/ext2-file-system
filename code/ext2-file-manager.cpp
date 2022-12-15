@@ -99,58 +99,9 @@ void Ext2FileManager::touch(const char *directory_name, unsigned int directory_n
   fseek(this->ext2_image, new_directory_init_position - last_old_directory_to_update.rec_len, SEEK_SET);
   fwrite(&last_old_directory_to_update, 1, last_old_directory_to_update.rec_len, this->ext2_image);
 
-  fseek(this->ext2_image, new_directory_init_position, SEEK_SET);
-  fwrite(new_directory, 1, new_directory->rec_len, this->ext2_image);
-}
-
-bool Ext2FileManager::rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length)
-{
-  Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
-  Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
-
-  unsigned int directory_init_position_on_block = 0;
-  Ext2_Directory *directory = search_directory_and_position(this->ext2_image, actual_inode, directory_name, &directory_init_position_on_block);
-  
-  if (!directory)
-    return false;
-
-  vector<Ext2_Directory> directories = read_ext2_directories(this->ext2_image, actual_inode);
-  Ext2_Directory last_intern_directory = directories.back();
-
-  if((bytes_to_4_bytes_groups_length(new_directory_name_length) - directory->name_len) > last_intern_directory.rec_len)
-    throw "there is not enough space in the block to store the new name";
-
-  /* caso especial em que o diretório que vai ter o nome alterado é o ultimo diretório do bloco */
-  if(directory_init_position_on_block == (1024 - directory->rec_len)){
-    memcpy(directory->name, new_directory_name, new_directory_name_length);
-    directory->rec_len = directory->rec_len - (bytes_to_4_bytes_groups_length(new_directory_name_length) - bytes_to_4_bytes_groups_length(directory->name_len));
-    directory->name_len = new_directory_name_length;
+  fseek(this->ext2_image, new_directory_init_position, SEEK_SET
     fseek(ext2_image, directory_init_position_on_block + BLOCK_OFFSET(actual_inode->i_block[0]), SEEK_SET);
-    fwrite(directory, 1, 8 + directory->name_len, this->ext2_image);
-    return true;
-  }
 
-  unsigned int prox_directory_init_position_on_block = directory_init_position_on_block + directory->rec_len;
-  uint32_t init_position_to_shift =  prox_directory_init_position_on_block + BLOCK_OFFSET(actual_inode->i_block[0]);
-  unsigned int bytes_to_shift = (1024 - last_intern_directory.rec_len) + (8 + last_intern_directory.name_len) - prox_directory_init_position_on_block;
-  unsigned int offset = bytes_to_4_bytes_groups_length(new_directory_name_length) - bytes_to_4_bytes_groups_length(directory->name_len);
-
-
-  fseek(this->ext2_image, 1024 - (last_intern_directory.rec_len) + BLOCK_OFFSET(actual_inode->i_block[0]), SEEK_SET);
-  last_intern_directory.rec_len -= offset;
-  fwrite(&last_intern_directory, 1, (8 + bytes_to_4_bytes_groups_length(last_intern_directory.name_len)), this->ext2_image);
-
-  shift_bytes(this->ext2_image, prox_directory_init_position_on_block + BLOCK_OFFSET(actual_inode->i_block[0]), bytes_to_shift, offset);
-
-  memcpy(directory->name, new_directory_name, new_directory_name_length);
-  directory->name_len = new_directory_name_length;
-  directory->rec_len = 8 + bytes_to_4_bytes_groups_length(new_directory_name_length);
-
-  fseek(this->ext2_image, directory_init_position_on_block + BLOCK_OFFSET(actual_inode->i_block[0]), SEEK_SET);
-  fwrite(directory, 1, directory->rec_len, this->ext2_image);
-
-  return true;
-}
 
 
 
