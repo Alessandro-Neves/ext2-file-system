@@ -12,7 +12,7 @@ FILE *get_file(const char *address)
   if (file == NULL)
   {
     cout << string(RED) << "\n[ File " << address << " is not valid ]" << string(DEFAULT) << endl;
-    throw("[ Error::getFile ]");
+    new Error("get_file");
   }
   else
     cout << string(GREEN) << "\n[ File " << address << " read ]" << string(DEFAULT) << endl;
