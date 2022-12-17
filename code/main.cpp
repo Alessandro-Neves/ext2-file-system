@@ -107,9 +107,9 @@ int main()
     // fm->cd("religiosos");
     // fm->cat("Biblia.txt");
 
-    // fm->print_block_bitmap();
+    fm->print_block_bitmap();
 
-    shell(fm);
+    // shell(fm);
   }
   catch (const char *str) /* tratamento de exceções */
   {

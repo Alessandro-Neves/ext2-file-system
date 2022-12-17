@@ -7,13 +7,21 @@
 Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, unsigned int inode_order);
 
 /**
- * @brief imprime os dados do inode na saída
- * @param inode estrutura com dados do inode
+ * brief: imprime os dados do inode na saída.
+ * param: inode estrutura com dados do inode.
  */
 void print_ext2_inode(Ext2_Inode* inode);
 
 void print_inode_blocks_content(FILE* ext2_image, Ext2_Inode* inode);
 
 unsigned int inode_order_on_block_group(Ext2_Superblock* superblock, uint32_t inode);
+
+/**
+ * brief: cria um inode com propriedades setadas com valores padrões.
+ * return: Ext2_Inode* ponteiro para o inode criado.
+ */
+Ext2_Inode* create_default_inode();
+
+bool set_bit_of_inode_bitmap(Ext2_Superblock* superblock , uint32_t inode, FILE* ext2_image);
 
 #endif

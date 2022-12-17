@@ -1,9 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <cstdbool>
+#include <ctime>
+
 #include "../headers/inode-operations.hpp"
 #include "../headers/colors.hpp"
 #include "../headers/util-operations.hpp"
+#include "../headers/blocks-group-operations.hpp"
 
 using namespace std;
 
@@ -282,4 +285,50 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
         return;
     }
   }
+}
+
+Ext2_Inode* create_default_inode() {
+  Ext2_Inode* inode = (Ext2_Inode*) malloc (sizeof(Ext2_Inode));
+
+  inode->i_mode = (uint16_t) 0x41ED;
+
+  inode->i_gid = 0;
+  inode->i_uid = 0;
+
+  inode->i_ctime = std::time(nullptr);
+  inode->i_atime = std::time(nullptr);
+  inode->i_dtime = std::time(nullptr);
+
+  inode->i_size = 0;
+  inode->i_links_count = 0;
+  inode->i_flags = 0;
+  inode->i_blocks = 0;
+
+  inode->i_generation = 0;
+  inode->i_file_acl = 0;
+  inode->i_dir_acl = 0;
+  inode->i_faddr = 0;
+
+  return inode;
+}
+
+char get_byte_of_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image){
+  uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_block_bitmap);
+  uint32_t absolut_byte_position = absolut_bitmap_position + byte_order;
+
+  char byte = 0;
+
+  fseek(ext2_image, absolut_byte_position, SEEK_SET);
+  fread(&byte, 1, 1, ext2_image);
+  return byte;
+}
+
+bool set_bit_of_inode_bitmap(Ext2_Superblock* superblock , uint32_t inode, FILE* ext2_image) {
+  uint32_t bgd_order = block_group_from_inode(superblock, inode);
+  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(ext2_image, block_group_descriptor_address(bgd_order));
+  uint32_t inode_order = inode_order_on_block_group(superblock, inode);
+
+  char byte_of_bitmap = get_byte_of_bitmap(blocks_group_descriptor_of_inode, inode_order, ext2_image);
+
+  std::cout << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
 }

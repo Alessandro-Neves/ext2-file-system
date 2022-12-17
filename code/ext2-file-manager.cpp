@@ -187,12 +187,16 @@ void Ext2FileManager::info_inode(unsigned int inode)
   unsigned int inode_block_group = block_group_from_inode(this->superblock, inode);
   unsigned int bgd = block_group_from_inode(this->superblock, inode);
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(inode_block_group));
-  print_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode);
+  // print_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode);
   Ext2_Inode *found_inode = read_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode_order_on_block_group(this->superblock, inode));
   print_ext2_inode(found_inode);
 }
 
 void Ext2FileManager::print_block_bitmap(){
+
+  set_bit_of_inode_bitmap(this->superblock, 1000, this->ext2_image);
+  return;
+  
   uint32_t bitmap_absolut_position = BLOCK_OFFSET(this->blocks_group_descriptor->bg_block_bitmap);
   unsigned int blocks_per_group = this->superblock->s_blocks_per_group;
 
@@ -204,10 +208,11 @@ void Ext2FileManager::print_block_bitmap(){
   fread(bitmap, 1, bitsmap_size_as_bytes, this->ext2_image);
 
   for(int index = 0; index < bitsmap_size_as_bytes; index++)
-    // std::cout << "O valor em binario de '" << c << "' eh: " << std::bitset<8>(c) << std::endl;
+    bitmap[index] = reverse_bits(bitmap[index]);
 
   for(int index = 0; index < bitsmap_size_as_bytes; index++){
-
+    if(!(index % 4) && index >0) std::cout << std::endl;
+    std::cout << std::bitset<8>(bitmap[index]) << " ";
   }
 }
 
