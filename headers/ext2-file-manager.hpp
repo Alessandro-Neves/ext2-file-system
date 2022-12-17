@@ -19,6 +19,8 @@ class Ext2FileManager {
   void info_blocks_group_descriptor();
   void info_inode(unsigned int inode);
 
+  
+
   public:
   bool cd(const char *directory_name);
   bool cat(const char *directory_name);

@@ -4,6 +4,7 @@
 using namespace std;
 int main(){
   cout << "char:\t" << sizeof(unsigned char) << endl;
+  cout << "boolean:\t" << sizeof(bool) << endl;
   cout << "short:\t" << sizeof(unsigned short) << endl;
   cout << "int:\t" << sizeof(unsigned int) << endl;
   cout << "int8:\t" << sizeof(int8_t) << endl;

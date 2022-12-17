@@ -9,6 +9,8 @@
 #include "../headers/ext2-file-manager.hpp"
 #include "../headers/error.hpp"
 
+#include "../headers/util-operations.hpp"
+
 void shell(Ext2FileManager *fm)
 {
   std::string input, operation, argument;

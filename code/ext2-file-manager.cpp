@@ -203,25 +203,11 @@ void Ext2FileManager::print_block_bitmap(){
   fseek(this->ext2_image, bitmap_absolut_position, SEEK_SET);
   fread(bitmap, 1, bitsmap_size_as_bytes, this->ext2_image);
 
-  /* corrigir inversão bitmap */
-  bool aux[8];
-  for(int index = 0; index < bitsmap_size_as_bytes; index++){
-    int x = 0;
-    for(int i = 7; i >= 0; i++){
-      aux[x] = ((bool*)bitmap[index])[i];
-      x++;
-    }
-
-    for(int i = 0; i < 8; i++)
-      ((bool*) bitmap[index])[i] = aux[x];
-  }
+  for(int index = 0; index < bitsmap_size_as_bytes; index++)
+    // std::cout << "O valor em binario de '" << c << "' eh: " << std::bitset<8>(c) << std::endl;
 
   for(int index = 0; index < bitsmap_size_as_bytes; index++){
-    cout << index << ":  ";
-    for(int i = 0; i < 8; i++){
-      cout << (bool) ((bitmap[index] >> i) & 1) << "  ";
-    }
-    cout << endl;
+
   }
 }
 
