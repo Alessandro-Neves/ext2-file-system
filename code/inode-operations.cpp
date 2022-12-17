@@ -38,21 +38,20 @@ void print_ext2_inode(Ext2_Inode *inode)
   cout << "lower 32-bit file size:\t\t\t" << (unsigned)inode->i_size << endl;
   cout << "acess time:\t\t" << (unsigned)inode->i_atime << endl;
   cout << "creation time:\t\t" ;
-  print_time_from_unix(unsigned)inode->i_ctime);
+  print_time_from_unix((unsigned)inode->i_ctime);
 
   cout << "modification time:\t\t" << (unsigned)inode->i_mtime << endl;
-  print_time_from_unix(unsigned)inode->i_mtime);
+  print_time_from_unix((unsigned)inode->i_mtime);
 
   cout << "deletion time:\t\t" << (unsigned)inode->i_dtime << endl;
-  print_time_from_unix(unsigned)inode->i_dtime);
+  print_time_from_unix((unsigned)inode->i_dtime);
   
   cout << "group id:\t\t\t" << (unsigned)inode->i_gid << endl;
   cout << "link count inode:\t\t" << (unsigned)inode->i_links_count << endl;
-  //cout << "i_gid:\t\t\t" << (unsigned)inode->i_gid << endl; // gid de novo 
   cout << "512-bytes blocks:\t\t" << (unsigned)inode->i_blocks << endl;
   cout << "ext2 flags:\t\t" << (unsigned)inode->i_flags << endl;
   cout << "reserved (Linux):\t\t\t" << (unsigned)inode->osd1 << endl;
-  cout << "i_block:\t\t" // arrumar aqui
+  cout << "i_block:\t\t"
        << "[";
   print_array(inode->i_block, 15);
   cout << " ](15)" << endl;

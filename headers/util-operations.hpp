@@ -10,6 +10,6 @@ bool has_null(const char* array, int size);
 
 unsigned int bytes_to_4_bytes_groups_length(unsigned int bytes);
 
-void print_time_from_unix(unsigned int tempo)
+void print_time_from_unix(unsigned int tempo);
 
 #endif

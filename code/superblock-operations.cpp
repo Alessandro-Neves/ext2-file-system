@@ -54,12 +54,12 @@ void print_superblock(Ext2_Superblock* superblock){
     cout << "compatible feature set:\t\t"           << (unsigned) superblock->s_feature_compat             << endl;
     cout << "incompatible feature set:\t\t"         << (unsigned) superblock->s_feature_incompat           << endl;
     cout << "read only compatible feature set:\t\t" << (unsigned) superblock->s_feature_ro_compat          << endl;
-    cout << "volume UUID:\t\t"                      << (unsigned) superblock->s_uuid                       << endl;
-    cout << "volume name:\t\t"                      << (unsigned) superblock->s_volume_name                << endl;
-    cout << "volume last mounted:\t\t"              << (unsigned) superblock->s_last_mounted               << endl;
+    cout << "volume UUID:\t\t"                      << superblock->s_uuid                       << endl;
+    cout << "volume name:\t\t"                      << superblock->s_volume_name                << endl;
+    cout << "volume last mounted:\t\t"              << superblock->s_last_mounted               << endl;
     cout << "algorithm usage bitmap:\t\t"           << (unsigned) superblock->s_algorithm_usage_bitmap     << endl;
-    cout << "blocks to try to preallocate :\t\t"    << (unsigned) superblock->preallocate                  << endl;
-    cout << "blocks preallocate dir:\t\t"           << (unsigned) superblock->s_prealloc_blocks            << endl;
+    cout << "blocks to try to preallocate :\t\t"    << (unsigned) superblock->s_prealloc_blocks            << endl;
+    cout << "blocks preallocate dir:\t\t"           << (unsigned) superblock->s_prealloc_dir_blocks        << endl;
 
     cout << "s_inode_size:\t\t"           << (unsigned) superblock->s_inode_size                 << endl;
 }
