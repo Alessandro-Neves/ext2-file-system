@@ -11,6 +11,8 @@
  */
 Ext2_Superblock* read_ext2_superblock(FILE* ext2_image);
 
+void write_ext2_superblock(Ext2_Superblock* superblock, FILE* ext2_image);
+
 /**
  * @brief imprime os dados do superbloco na saída
  * @param superblock estrutura com dados do superbloco

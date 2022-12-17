@@ -19,6 +19,11 @@ Ext2_Superblock* read_ext2_superblock(FILE* ext2_image) {
     return superblock;
 }
 
+void write_ext2_superblock(Ext2_Superblock* superblock, FILE* ext2_image) {
+    fseek(ext2_image, 1024, SEEK_SET);
+    fwrite(superblock, 1, sizeof(Ext2_Superblock), ext2_image);
+}
+
 void print_superblock(Ext2_Superblock* superblock){
     cout << "s_inodes_count:\t\t"         << (unsigned) superblock->s_inodes_count               << endl;
     cout << "s_blocks_count:\t\t"         << (unsigned) superblock->s_blocks_count               << endl;  

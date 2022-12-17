@@ -67,7 +67,8 @@ void shell(Ext2FileManager *fm)
 
     else if (!std::strcmp(operation.c_str(), "print-bgd"))
     {
-      fm->info_blocks_group_descriptor();
+      int bgd_index = std::stoi(argument);
+      fm->info_blocks_group_descriptor(bgd_index);
     }
 
     else if (!std::strcmp(operation.c_str(), "touch"))
@@ -122,6 +123,8 @@ int main()
     // fm->cd("livros");
     // fm->cd("religiosos");
     // fm->cat("Biblia.txt");
+
+    // fm->test();
 
     shell(fm);
   }

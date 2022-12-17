@@ -31,4 +31,6 @@ uint32_t block_group_descriptor_address(int order);
 
 unsigned int block_group_from_inode(Ext2_Superblock* superblock, unsigned int inode_order);
 
+void write_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* bgd , FILE *ext2_image, uint32_t at_position);
+
 #endif

@@ -28,3 +28,12 @@ char set_bit(char c, int index, bool value) {
   if (value) return c | (1 << index);
   else return c & ~(1 << index);
 }
+
+int find_first_zero_bit(char c) {
+  for (int i = 0; i < 8; i++) {
+    if ((c & (1 << i)) == 0) {
+      return i;
+    }
+  }
+  return -1; // Nenhum bit 0 encontrado
+}

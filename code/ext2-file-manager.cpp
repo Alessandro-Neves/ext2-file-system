@@ -72,12 +72,17 @@ void Ext2FileManager::touch(const char *directory_name, unsigned int directory_n
   vector<Ext2_Directory> directories = read_ext2_directories(this->ext2_image, actual_inode);
 
   /* setando o bitmap do novo inode */
-  this->set_bit_of_inode_bitmap(8400, true);
+
+  uint32_t free_inode_index = find_free_inode(this->superblock, this->ext2_image);
+  this->set_bit_of_inode_bitmap(free_inode_index, true);
+
+  std::cout << string(RED) << "free-inode: " << free_inode_index << std::string(DEFAULT) << std::endl;
 
   /* setando os valores iniciais do novo inode na tabela de inodes */
-  uint32_t bgd_order = block_group_from_inode(this->superblock, 8400);
+  uint32_t bgd_order = block_group_from_inode(this->superblock, free_inode_index);
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
-  uint32_t inode_order = inode_order_on_block_group(this->superblock, 8400);
+  uint32_t inode_order = inode_order_on_block_group(this->superblock, free_inode_index);
+
   write_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode_order);
 
   Ext2_Directory last_old_directory_to_update = directories.back();
@@ -97,7 +102,7 @@ void Ext2FileManager::touch(const char *directory_name, unsigned int directory_n
   unsigned int directory_name_length_as_4_bytes_group = bytes_to_4_bytes_groups_length(directory_name_length);
 
   new_directory->file_type = 1;
-  new_directory->inode = 8400;
+  new_directory->inode = free_inode_index;
   new_directory->name_len = directory_name_length;
   new_directory->rec_len = 1024 - new_directory_init_position_on_block;
 
@@ -110,6 +115,15 @@ void Ext2FileManager::touch(const char *directory_name, unsigned int directory_n
 
   fseek(this->ext2_image, new_directory_init_position, SEEK_SET);
   fwrite(new_directory, 1, new_directory->rec_len, this->ext2_image);
+
+  /* Atualizando descritor do grupo */
+  blocks_group_descriptor_of_inode->bg_free_inodes_count--;
+  print_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode);
+  write_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode, this->ext2_image, block_group_descriptor_address(bgd_order));
+
+  /* Atualizando superbloco */
+  this->superblock->s_free_inodes_count--;
+  write_ext2_superblock(this->superblock, this->ext2_image);
 }
 
 bool Ext2FileManager::rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length)
@@ -186,9 +200,11 @@ void Ext2FileManager::info_superblock()
   print_superblock(this->superblock);
 }
 
-void Ext2FileManager::info_blocks_group_descriptor()
+void Ext2FileManager::info_blocks_group_descriptor(int bgd_index)
 {
-  print_ext2_blocks_group_descriptor(this->blocks_group_descriptor);
+  uint32_t bgd_absolute_address = block_group_descriptor_address(bgd_index);
+  Ext2_Blocks_Group_Descriptor* bgd = read_ext2_blocks_group_descriptor(this->ext2_image, bgd_absolute_address);
+  print_ext2_blocks_group_descriptor(bgd);
 }
 
 void Ext2FileManager::info_inode(unsigned int inode)
@@ -228,7 +244,7 @@ void Ext2FileManager::print_byte_on_bitmap_of_inode(unsigned int inode) {
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
   uint32_t inode_order = inode_order_on_block_group(this->superblock, inode);
 
-  char byte_of_bitmap = get_byte_of_bitmap(blocks_group_descriptor_of_inode, inode_order / 8, this->ext2_image);
+  char byte_of_bitmap = get_byte_of_inode_bitmap(blocks_group_descriptor_of_inode, (inode_order - 1) / 8, this->ext2_image);
   unsigned int index_of_bit = ((inode - (this->superblock->s_inodes_per_group * bgd_order)) - 1) % 8;
 
   std::cout << string(YELLOW) << index_of_bit << string(DEFAULT) << " " << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
@@ -239,11 +255,11 @@ void Ext2FileManager::set_bit_of_inode_bitmap(unsigned int inode, bool value) {
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
   uint32_t inode_order = inode_order_on_block_group(this->superblock, inode);
 
-  char byte_of_bitmap = get_byte_of_bitmap(blocks_group_descriptor_of_inode, inode_order / 8, this->ext2_image);
+  char byte_of_bitmap = get_byte_of_inode_bitmap(blocks_group_descriptor_of_inode, (inode_order - 1) / 8, this->ext2_image);
 
   unsigned int index_of_bit = ((inode - (this->superblock->s_inodes_per_group * bgd_order)) - 1) % 8;
 
-  set_byte_on_bitmap(set_bit(byte_of_bitmap, index_of_bit, value), blocks_group_descriptor_of_inode, inode_order / 8, this->ext2_image);
+  set_byte_on_inode_bitmap(set_bit(byte_of_bitmap, index_of_bit, value), blocks_group_descriptor_of_inode, (inode_order - 1) / 8, this->ext2_image);
 }
 
 std::string Ext2FileManager::pwd()
@@ -257,4 +273,9 @@ std::string Ext2FileManager::pwd()
   }
 
   return str;
+}
+
+
+void Ext2FileManager::test() {
+  cout << string(RED) << find_free_inode(this->superblock, this->ext2_image) << string(DEFAULT) << endl;
 }

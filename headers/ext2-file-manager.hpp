@@ -16,7 +16,7 @@ class Ext2FileManager {
 
   public:
   void info_superblock();
-  void info_blocks_group_descriptor();
+  void info_blocks_group_descriptor(int bgd_index);
   void info_inode(unsigned int inode);
 
   
@@ -32,6 +32,7 @@ class Ext2FileManager {
   void set_bit_of_inode_bitmap(unsigned int inode, bool value);
   void print_block_bitmap(unsigned int inode);
   void print_byte_on_bitmap_of_inode(unsigned int inode);
+  void test();
 
   std::string pwd();
   Ext2FileManager(FILE *ext2_image);

@@ -7,6 +7,7 @@
 #include "../headers/colors.hpp"
 #include "../headers/util-operations.hpp"
 #include "../headers/blocks-group-operations.hpp"
+#include "../headers/error.hpp"
 
 using namespace std;
 
@@ -331,9 +332,9 @@ Ext2_Inode* create_default_inode() {
   return inode;
 }
 
-char get_byte_of_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image){
+char get_byte_of_inode_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_index, FILE* ext2_image){
   uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
-  uint32_t absolut_byte_position = absolut_bitmap_position + byte_order;
+  uint32_t absolut_byte_position = absolut_bitmap_position + byte_index;
 
   char byte = 0;
 
@@ -342,10 +343,29 @@ char get_byte_of_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, 
   return byte;
 }
 
-void set_byte_on_bitmap(char byte, Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image) {
+void set_byte_on_inode_bitmap(char byte, Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image) {
   uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
   uint32_t absolut_byte_position = absolut_bitmap_position + byte_order;
 
   fseek(ext2_image, absolut_byte_position, SEEK_SET);
   fwrite(&byte, 1, 1, ext2_image);
+}
+
+uint32_t find_free_inode(Ext2_Superblock* superblock, FILE* ext2_image) {
+
+  uint32_t absolute_byte_bitmap = 0;
+  for(int index = 0; index < 8; index++ ){
+    uint32_t bgd_absolute_address = block_group_descriptor_address(index);
+    Ext2_Blocks_Group_Descriptor* bgd = read_ext2_blocks_group_descriptor(ext2_image, bgd_absolute_address);
+    for(int byte_index = 0; byte_index < 256; byte_index++){
+      char byte = get_byte_of_inode_bitmap(bgd, byte_index, ext2_image);
+      if(byte != (char)0b11111111) {
+        int index_of_first_zero_bit = find_first_zero_bit(byte);
+        if(index_of_first_zero_bit != -1) return (absolute_byte_bitmap * 8) + index_of_first_zero_bit + 1; // +1: utilizado porque os inodes omeçam a partir de 1
+        else throw new Error("inode-operations::find_free_inode::0"); 
+      } else absolute_byte_bitmap ++;
+    }
+  }
+
+  return -1;
 }

@@ -26,8 +26,10 @@ Ext2_Inode* create_default_inode();
 
 bool set_bit_of_inode_bitmap(Ext2_Superblock* superblock , uint32_t inode, FILE* ext2_image);
 
-char get_byte_of_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image);
+char get_byte_of_inode_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_index, FILE* ext2_image);
 
-void set_byte_on_bitmap(char byte, Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image);
+void set_byte_on_inode_bitmap(char byte, Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image);
+
+uint32_t find_free_inode(Ext2_Superblock* superblock, FILE* ext2_image);
 
 #endif

@@ -23,4 +23,13 @@ char reverse_bits(char c);
 */
 char set_bit(char c, int index, bool value);
 
+/*
+  Função para procurar o index do primeiro bit 0 (zero) no byte,  
+  a cardinalidade do index é em relação ao bit menos significativo.
+  Por exemplo: find_first_zero_bit((char) 0b11101011) retornará 2, 
+  onde 2 se refere ao 3º bit menos significativo do byte.
+  Retorna -1 quando não existe um bit zero no byte.
+*/ 
+int find_first_zero_bit(char c);
+
 #endif

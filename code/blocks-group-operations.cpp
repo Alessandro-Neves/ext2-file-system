@@ -17,6 +17,11 @@ Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image
   return blocks_group_descriptor;
 }
 
+void write_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* bgd , FILE *ext2_image, uint32_t at_position) {
+  fseek(ext2_image, at_position, SEEK_SET);
+  fwrite(bgd, 1, sizeof(Ext2_Blocks_Group_Descriptor), ext2_image);
+}
+
 /*
 * retorna a qual descritor de bloco o inode pertence.
 * Obs: para o primeiro descritor de bloco, retorna 0 e assim por diante.
