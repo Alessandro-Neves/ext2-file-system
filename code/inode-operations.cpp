@@ -116,7 +116,7 @@ bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, 
   return true;
 }
 
-void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
+void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* path)
 {
   unsigned int bytes_to_read = inode->i_size;
   unsigned int blocks_read = 0;
@@ -127,7 +127,7 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
   uint32_t *indexes_level_2 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
   uint32_t *indexes_level_3 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
 
-  ofstream host_file("teste.txt");
+  ofstream host_file(path);
 
   if (!host_file.is_open())
     return;
@@ -248,7 +248,6 @@ bool _print_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes
 
 void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
 {
-  copy_inode_blocks_content(ext2_image, inode);
   unsigned int bytes_to_read = inode->i_size;
   unsigned int blocks_read = 0;
   bool exit = false;

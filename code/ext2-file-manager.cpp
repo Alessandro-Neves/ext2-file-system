@@ -175,7 +175,35 @@ bool Ext2FileManager::rename(const char *directory_name, const char *new_directo
   return true;
 }
 
+bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name_length) {
+    Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
+    Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
 
+    Ext2_Directory *directory = search_directory(this->ext2_image, actual_inode, directory_name);
+    if (!directory)
+      return false;
+
+    
+}
+
+bool Ext2FileManager::copy(const char *origin_name, const char* destiny_name)
+{
+
+  Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
+  Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
+
+  Ext2_Directory *directory = search_directory(this->ext2_image, actual_inode, origin_name);
+  if (!directory)
+    return false;
+
+  unsigned int directory_inode_block_group = block_group_from_inode(this->superblock, directory->inode);
+  Ext2_Blocks_Group_Descriptor *bgd_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));
+
+  Ext2_Inode *directory_inode = read_ext2_inode(this->ext2_image, bgd_of_inode, inode_order_on_block_group(this->superblock, directory->inode));
+  copy_inode_blocks_content(this->ext2_image, directory_inode, destiny_name);
+
+  return true;
+}
 
 bool Ext2FileManager::cat(const char *directory_name)
 {
@@ -274,6 +302,8 @@ std::string Ext2FileManager::pwd()
 
   return str;
 }
+
+
 
 
 void Ext2FileManager::test() {

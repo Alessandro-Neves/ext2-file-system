@@ -93,6 +93,18 @@ void shell(Ext2FileManager *fm)
       if (!fm->rename(directory_name.c_str(), new_directory_name.c_str(), new_directory_name.size()))
         throw "directory or file not found";
     }
+    
+    else if (!std::strcmp(operation.c_str(), "cp"))
+    {
+
+      std::string directory_name = argument.substr(0, argument.find(" "));
+
+      int prox = argument.find(" ") + 1;
+      std::string new_directory_name = argument.substr(prox, argument.length() - prox);
+
+      if (!fm->copy(directory_name.c_str(), new_directory_name.c_str()))
+        throw "directory or file not found";
+    }
 
     else  throw new FileManagerInfo("command not found");
     
