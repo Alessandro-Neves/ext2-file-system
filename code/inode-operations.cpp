@@ -307,7 +307,7 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
 }
 
 Ext2_Inode* create_default_inode() {
-  Ext2_Inode* inode = (Ext2_Inode*) malloc (sizeof(Ext2_Inode));
+  Ext2_Inode* inode = (Ext2_Inode*) calloc (1, sizeof(Ext2_Inode));
 
   inode->i_mode = (uint16_t) 0x81A4;
 

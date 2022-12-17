@@ -23,3 +23,8 @@ image-restore:
 clear:
 	rm -rf *.o
 	rm -rf *.exe
+
+mount:
+	sudo umount /mnt 
+	sudo mount ext2.img /mnt
+	ls /mnt
