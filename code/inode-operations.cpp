@@ -309,21 +309,21 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
 Ext2_Inode* create_default_inode() {
   Ext2_Inode* inode = (Ext2_Inode*) malloc (sizeof(Ext2_Inode));
 
-  inode->i_mode = (uint16_t) 0x41ED;
+  inode->i_mode = (uint16_t) 0x81A4;
 
   inode->i_gid = 0;
   inode->i_uid = 0;
 
   inode->i_ctime = std::time(nullptr);
   inode->i_atime = std::time(nullptr);
-  inode->i_dtime = std::time(nullptr);
+  inode->i_dtime = 0;
 
   inode->i_size = 0;
   inode->i_links_count = 0;
   inode->i_flags = 0;
   inode->i_blocks = 0;
 
-  inode->i_generation = 0;
+  inode->i_generation = 3079266834;
   inode->i_file_acl = 0;
   inode->i_dir_acl = 0;
   inode->i_faddr = 0;

@@ -75,7 +75,7 @@ void shell(Ext2FileManager *fm)
       fm->touch(argument.c_str(), argument.size());
     }
 
-    else if (!std::strcmp(operation.c_str(), "print-bitmap"))
+    else if (!std::strcmp(operation.c_str(), "print-inode-bitmap"))
       fm->print_block_bitmap(1);
 
     else if (!std::strcmp(operation.c_str(), "clear"))
