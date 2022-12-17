@@ -16,6 +16,9 @@ void print_array(uint32_t *array, int size)
     cout << " " << array[i];
 }
 
+/**
+ * le o nº inode do grupo de bloco
+ */
 Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, unsigned int inode_order)
 {
 
@@ -29,6 +32,22 @@ Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *bloc
   return inode;
 }
 
+void write_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, unsigned int inode_order)
+{
+
+  Ext2_Inode *inode = create_default_inode();
+
+  int inode_position = BLOCK_OFFSET(block_group_descriptor->bg_inode_table) + ((inode_order - 1) * sizeof(struct ext2_inode));
+
+  fseek(ext2_image, inode_position, SEEK_SET);
+
+  fwrite(inode, 1, sizeof(Ext2_Inode), ext2_image);
+}
+
+/**
+ * retorna a ordem do inode dentro do descritor de grupo
+ * Obs: Para o primeiro inode do descritor retorna 1
+ */
 unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t inode)
 {
   return (unsigned int) inode % superblock->s_inodes_per_group;
@@ -313,7 +332,7 @@ Ext2_Inode* create_default_inode() {
 }
 
 char get_byte_of_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image){
-  uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_block_bitmap);
+  uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
   uint32_t absolut_byte_position = absolut_bitmap_position + byte_order;
 
   char byte = 0;
@@ -323,12 +342,10 @@ char get_byte_of_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, 
   return byte;
 }
 
-bool set_bit_of_inode_bitmap(Ext2_Superblock* superblock , uint32_t inode, FILE* ext2_image) {
-  uint32_t bgd_order = block_group_from_inode(superblock, inode);
-  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(ext2_image, block_group_descriptor_address(bgd_order));
-  uint32_t inode_order = inode_order_on_block_group(superblock, inode);
+void set_byte_on_bitmap(char byte, Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image) {
+  uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
+  uint32_t absolut_byte_position = absolut_bitmap_position + byte_order;
 
-  char byte_of_bitmap = get_byte_of_bitmap(blocks_group_descriptor_of_inode, inode_order, ext2_image);
-
-  std::cout << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
+  fseek(ext2_image, absolut_byte_position, SEEK_SET);
+  fwrite(&byte, 1, 1, ext2_image);
 }

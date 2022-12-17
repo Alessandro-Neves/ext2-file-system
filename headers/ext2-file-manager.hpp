@@ -29,7 +29,9 @@ class Ext2FileManager {
   void ls();
 
   public:
-  void print_block_bitmap();
+  void set_bit_of_inode_bitmap(unsigned int inode, bool value);
+  void print_block_bitmap(unsigned int inode);
+  void print_byte_on_bitmap_of_inode(unsigned int inode);
 
   std::string pwd();
   Ext2FileManager(FILE *ext2_image);

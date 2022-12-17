@@ -17,6 +17,10 @@ Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image
   return blocks_group_descriptor;
 }
 
+/*
+* retorna a qual descritor de bloco o inode pertence.
+* Obs: para o primeiro descritor de bloco, retorna 0 e assim por diante.
+*/
 unsigned int block_group_from_inode(Ext2_Superblock* superblock, unsigned int inode) {
   unsigned int inodes_per_block_group = superblock->s_inodes_per_group;
   return ( (inode - 1) / inodes_per_block_group );

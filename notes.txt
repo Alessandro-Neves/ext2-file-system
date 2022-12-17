@@ -9,3 +9,20 @@
 
 
 -> Two blocks near the start of each group are reserved for the block usage bitmap and the inode usage bitmap which show which blocks and inodes are in use
+
+
+
+
+
+
+
+
+
+
+[ / ]>  print-byte 8193
+
+8193 4
+10000000
+
+
+o inode 8193 é o primeiro inode do 4º descritor de grupo

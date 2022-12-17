@@ -44,6 +44,22 @@ void shell(Ext2FileManager *fm)
       fm->info_inode(inode);
     }
 
+    else if(!std::strcmp(operation.c_str(), "print-byte")){
+      int inode = std::stoi(argument);
+      fm->print_byte_on_bitmap_of_inode(inode);
+    }
+
+    else if(!std::strcmp(operation.c_str(), "set-inode")){
+      std::string inode = argument.substr(0, argument.find(" "));
+
+      int prox = argument.find(" ") + 1;
+      std::string value = argument.substr(prox, argument.length() - prox);
+      
+      int int_inode = std::stoi(inode);
+      bool bool_value = (bool) (std::stoi(value));
+      fm->set_bit_of_inode_bitmap(int_inode, bool_value);
+    }
+
     else if (!std::strcmp(operation.c_str(), "print-superblock"))
     {
       fm->info_superblock();
@@ -59,8 +75,8 @@ void shell(Ext2FileManager *fm)
       fm->touch(argument.c_str(), argument.size());
     }
 
-    else if (!std::strcmp(operation.c_str(), "print-block-bitmap"))
-      fm->print_block_bitmap();
+    else if (!std::strcmp(operation.c_str(), "print-bitmap"))
+      fm->print_block_bitmap(1);
 
     else if (!std::strcmp(operation.c_str(), "clear"))
       system("clear");
@@ -107,9 +123,7 @@ int main()
     // fm->cd("religiosos");
     // fm->cat("Biblia.txt");
 
-    fm->print_block_bitmap();
-
-    // shell(fm);
+    shell(fm);
   }
   catch (const char *str) /* tratamento de exceções */
   {

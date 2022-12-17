@@ -188,16 +188,14 @@ void Ext2FileManager::info_inode(unsigned int inode)
   unsigned int bgd = block_group_from_inode(this->superblock, inode);
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(inode_block_group));
   // print_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode);
+  cout << string(RED) << block_group_from_inode(this->superblock, inode) << " " <<  inode_order_on_block_group(this->superblock, inode) << string(DEFAULT) << endl;
   Ext2_Inode *found_inode = read_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode_order_on_block_group(this->superblock, inode));
   print_ext2_inode(found_inode);
 }
 
-void Ext2FileManager::print_block_bitmap(){
-
-  set_bit_of_inode_bitmap(this->superblock, 1000, this->ext2_image);
-  return;
-  
-  uint32_t bitmap_absolut_position = BLOCK_OFFSET(this->blocks_group_descriptor->bg_block_bitmap);
+void Ext2FileManager::print_block_bitmap(unsigned int inode){  
+  uint32_t bitmap_absolut_position = BLOCK_OFFSET(this->blocks_group_descriptor->bg_inode_bitmap);
+  cout << string(RED) << bitmap_absolut_position << string(DEFAULT) << std::endl;
   unsigned int blocks_per_group = this->superblock->s_blocks_per_group;
 
   unsigned int bitsmap_size_as_bytes = ( blocks_per_group / 8 );
@@ -214,6 +212,29 @@ void Ext2FileManager::print_block_bitmap(){
     if(!(index % 4) && index >0) std::cout << std::endl;
     std::cout << std::bitset<8>(bitmap[index]) << " ";
   }
+}
+
+void Ext2FileManager::print_byte_on_bitmap_of_inode(unsigned int inode) {
+  uint32_t bgd_order = block_group_from_inode(this->superblock, inode);
+  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
+  uint32_t inode_order = inode_order_on_block_group(this->superblock, inode);
+
+  char byte_of_bitmap = get_byte_of_bitmap(blocks_group_descriptor_of_inode, inode_order / 8, this->ext2_image);
+  unsigned int index_of_bit = ((inode - (this->superblock->s_inodes_per_group * bgd_order)) - 1) / 8;
+
+  std::cout << string(YELLOW) << index_of_bit << string(DEFAULT) << " " << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
+}
+
+void Ext2FileManager::set_bit_of_inode_bitmap(unsigned int inode, bool value) {
+  uint32_t bgd_order = block_group_from_inode(this->superblock, inode);
+  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
+  uint32_t inode_order = inode_order_on_block_group(this->superblock, inode);
+
+  char byte_of_bitmap = get_byte_of_bitmap(blocks_group_descriptor_of_inode, inode_order / 8, this->ext2_image);
+
+  unsigned int index_of_bit = ((inode - (this->superblock->s_inodes_per_group * bgd_order)) - 1) / 8;
+
+  set_byte_on_bitmap(set_bit(byte_of_bitmap, index_of_bit, value), blocks_group_descriptor_of_inode, inode_order / 8, this->ext2_image);
 }
 
 std::string Ext2FileManager::pwd()
