@@ -72,12 +72,12 @@ void Ext2FileManager::touch(const char *directory_name, unsigned int directory_n
   vector<Ext2_Directory> directories = read_ext2_directories(this->ext2_image, actual_inode);
 
   /* setando o bitmap do novo inode */
-  // this->set_bit_of_inode_bitmap(12292, true);
+  this->set_bit_of_inode_bitmap(8400, true);
 
   /* setando os valores iniciais do novo inode na tabela de inodes */
-  uint32_t bgd_order = block_group_from_inode(this->superblock, 12292);
+  uint32_t bgd_order = block_group_from_inode(this->superblock, 8400);
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
-  uint32_t inode_order = inode_order_on_block_group(this->superblock, 12292);
+  uint32_t inode_order = inode_order_on_block_group(this->superblock, 8400);
   write_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode_order);
 
   Ext2_Directory last_old_directory_to_update = directories.back();
@@ -97,7 +97,7 @@ void Ext2FileManager::touch(const char *directory_name, unsigned int directory_n
   unsigned int directory_name_length_as_4_bytes_group = bytes_to_4_bytes_groups_length(directory_name_length);
 
   new_directory->file_type = 1;
-  new_directory->inode = 12292;
+  new_directory->inode = 8400;
   new_directory->name_len = directory_name_length;
   new_directory->rec_len = 1024 - new_directory_init_position_on_block;
 

@@ -319,7 +319,7 @@ Ext2_Inode* create_default_inode() {
   inode->i_dtime = 0;
 
   inode->i_size = 0;
-  inode->i_links_count = 0;
+  inode->i_links_count = 1;
   inode->i_flags = 0;
   inode->i_blocks = 0;
 
