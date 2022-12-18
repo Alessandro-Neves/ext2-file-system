@@ -47,12 +47,17 @@ void shell(Ext2FileManager *fm)
       fm->info_inode(inode);
     }
 
-    else if(!std::strcmp(operation.c_str(), "print-byte")){
+    else if(!std::strcmp(operation.c_str(), "bitmapi")){
       int inode = std::stoi(argument);
       fm->print_byte_on_bitmap_of_inode(inode);
     }
 
-    else if(!std::strcmp(operation.c_str(), "set-inode")){
+    else if(!std::strcmp(operation.c_str(), "bitmapb")){
+      int block = std::stoi(argument);
+      fm->print_byte_on_bitmap_of_block(block);
+    }
+
+    else if(!std::strcmp(operation.c_str(), "seti")){
       std::string inode = argument.substr(0, argument.find(" "));
 
       int prox = argument.find(" ") + 1;
@@ -61,6 +66,17 @@ void shell(Ext2FileManager *fm)
       int int_inode = std::stoi(inode);
       bool bool_value = (bool) (std::stoi(value));
       fm->set_bit_of_inode_bitmap(int_inode, bool_value);
+    }
+
+    else if(!std::strcmp(operation.c_str(), "setb")){
+      std::string block = argument.substr(0, argument.find(" "));
+
+      int prox = argument.find(" ") + 1;
+      std::string value = argument.substr(prox, argument.length() - prox);
+      
+      int int_block = std::stoi(block);
+      bool bool_value = (bool) (std::stoi(value));
+      fm->set_bit_of_block_bitmap(int_block, bool_value);
     }
 
     else if (!std::strcmp(operation.c_str(), "print-superblock"))

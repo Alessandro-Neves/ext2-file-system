@@ -7,6 +7,7 @@
 #include "../headers/general-constants.hpp"
 #include "../headers/directory-operations.hpp"
 #include "../headers/util-operations.hpp"
+#include "../headers/block-operations.hpp"
 
 Ext2FileManager::Ext2FileManager(FILE *ext2_image)
 {
@@ -312,6 +313,18 @@ void Ext2FileManager::print_byte_on_bitmap_of_inode(unsigned int inode) {
   std::cout << string(YELLOW) << index_of_bit << string(DEFAULT) << " " << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
 }
 
+void Ext2FileManager::print_byte_on_bitmap_of_block(unsigned int block) {
+  uint32_t bgd_order = block_group_from_block(this->superblock, block);
+  cout << string(RED) << bgd_order << string(DEFAULT) << endl;
+  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_block = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
+  uint32_t block_bit_order = bit_block_order_on_block_group(this->superblock, block);
+
+  char byte_of_bitmap = get_byte_of_block_bitmap(blocks_group_descriptor_of_block, (block_bit_order - 1) / 8, this->ext2_image);
+  unsigned int index_of_bit = ((block - (this->superblock->s_blocks_per_group * bgd_order)) - 1) % 8;
+
+  std::cout << string(YELLOW) << index_of_bit << string(DEFAULT) << " " << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
+}
+
 void Ext2FileManager::set_bit_of_inode_bitmap(unsigned int inode, bool value) {
   uint32_t bgd_order = block_group_from_inode(this->superblock, inode);
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
@@ -322,6 +335,20 @@ void Ext2FileManager::set_bit_of_inode_bitmap(unsigned int inode, bool value) {
   unsigned int index_of_bit = ((inode - (this->superblock->s_inodes_per_group * bgd_order)) - 1) % 8;
 
   set_byte_on_inode_bitmap(set_bit(byte_of_bitmap, index_of_bit, value), blocks_group_descriptor_of_inode, (inode_order - 1) / 8, this->ext2_image);
+}
+
+void Ext2FileManager::set_bit_of_block_bitmap(unsigned int block, bool value) {
+  uint32_t bgd_order = block_group_from_block(this->superblock, block);
+  Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_block = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
+  uint32_t block_bit_order = bit_block_order_on_block_group(this->superblock, block);
+
+  char byte_of_bitmap = get_byte_of_block_bitmap(blocks_group_descriptor_of_block, (block_bit_order - 1) / 8, this->ext2_image);
+
+  unsigned int index_of_bit = ((block - (this->superblock->s_blocks_per_group * bgd_order)) - 1) % 8;
+
+  cout << string(RED) << bgd_order << " " << index_of_bit << string(DEFAULT) << endl;
+
+  set_byte_on_block_bitmap(set_bit(byte_of_bitmap, index_of_bit, value), blocks_group_descriptor_of_block, (block_bit_order - 1) / 8, this->ext2_image);
 }
 
 std::string Ext2FileManager::pwd()

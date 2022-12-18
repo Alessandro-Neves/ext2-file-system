@@ -33,8 +33,10 @@ class Ext2FileManager {
 
   public:
   void set_bit_of_inode_bitmap(unsigned int inode, bool value);
+  void set_bit_of_block_bitmap(unsigned int block, bool value);
   void print_block_bitmap(unsigned int inode);
   void print_byte_on_bitmap_of_inode(unsigned int inode);
+  void print_byte_on_bitmap_of_block(unsigned int block);
   void test();
 
   std::string pwd();
