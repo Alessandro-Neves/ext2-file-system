@@ -57,6 +57,23 @@ void shell(Ext2FileManager *fm)
       fm->touch(argument.c_str(), argument.size());
     }
 
+    else if (!std::strcmp(operation.c_str(), "pwd"))
+    {
+      std::cout << std::endl
+              << " home" << fm->pwd() << string(BLUE);
+      std::cout << std::string(DEFAULT) << std::endl; 
+    }
+
+    else if (!std::strcmp(operation.c_str(), "attr"))
+    {
+      fm->attr(argument.c_str());
+    }
+
+    else if (!std::strcmp(operation.c_str(), "info"))
+    {
+      fm->info();
+    }
+
     else if (!std::strcmp(operation.c_str(), "clear"))
       system("clear");
 

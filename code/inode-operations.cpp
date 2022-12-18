@@ -286,3 +286,64 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
     }
   }
 }
+
+std::string permission_i_mode(uint32_t i_mode){
+  std::string str;
+
+  if(i_mode & (0x4000))
+    str = str.append("d");
+  
+  if(i_mode & (0x8000))
+    str = str.append("f");
+
+  //user
+  if(i_mode & (0x0100))
+    str = str.append("r");
+  else 
+    str = str.append("-");
+
+  if(i_mode & (0x0080))
+    str = str.append("w");
+  else 
+    str = str.append("-");
+
+  if(i_mode & (0x0040))
+    str = str.append("x");
+  else 
+    str = str.append("-");
+
+  //group
+  if(i_mode & (0x0020))
+    str = str.append("r");
+  else 
+    str = str.append("-");
+
+  if(i_mode & (0x0010))
+    str = str.append("w");
+  else 
+    str = str.append("-");
+
+  if(i_mode & (0x0008))
+    str = str.append("r");
+  else 
+    str = str.append("-");
+
+  //other
+  if(i_mode & (0x0004))
+    str = str.append("r");
+  else 
+    str = str.append("-");
+
+  if(i_mode & (0x0002))
+    str = str.append("w");
+  else 
+    str = str.append("-");
+
+  if(i_mode & (0x0001))
+    str = str.append("r");
+  else 
+    str = str.append("-");
+  
+
+  return str;
+}

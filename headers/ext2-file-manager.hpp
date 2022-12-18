@@ -18,10 +18,12 @@ class Ext2FileManager {
   void info_superblock();
   void info_blocks_group_descriptor();
   void info_inode(unsigned int inode);
+  void info();
 
   public:
   bool cd(const char *directory_name);
   bool cat(const char *directory_name);
+  bool attr(const char *directory_name);
   void touch(const char *directory_name, unsigned int directory_name_length);
   bool rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length);
   void ls();

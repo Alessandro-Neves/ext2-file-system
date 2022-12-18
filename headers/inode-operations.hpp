@@ -16,4 +16,6 @@ void print_inode_blocks_content(FILE* ext2_image, Ext2_Inode* inode);
 
 unsigned int inode_order_on_block_group(Ext2_Superblock* superblock, uint32_t inode);
 
+std::string permission_i_mode(uint32_t i_mode);
+
 #endif
