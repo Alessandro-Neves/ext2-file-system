@@ -465,7 +465,29 @@ void Ext2FileManager::release_blocks_of_inode(Ext2_Inode *inode)
   }
 }
 
+void Ext2FileManager::attr(const char *directory_name){
+  Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
+  Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
+
+  Ext2_Directory *directory = search_directory(this->ext2_image, actual_inode, directory_name);
+  if (!directory)
+    return;
+
+  unsigned int directory_inode_block_group = block_group_from_inode(this->superblock, directory->inode);
+  Ext2_Blocks_Group_Descriptor *bgd_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));
+  Ext2_Inode *directory_inode = read_ext2_inode(this->ext2_image, bgd_of_inode, inode_order_on_block_group(this->superblock, directory->inode));
+  
+  std::string permission = permission_i_mode(directory_inode->i_mode); 
+
+  cout << "permissões\t" << "uid\t" << "gid\t" << "tamanho\t\t" << "modificado em\t" << endl;
+  cout << permission << "\t" << (unsigned)directory_inode->i_uid << "\t";
+  cout << (unsigned)directory_inode->i_gid << "\t" << (unsigned)directory_inode->i_size;
+  cout << "\t\t"; 
+  print_time_from_unix((unsigned)directory_inode->i_mtime);
+}
+
 void Ext2FileManager::test()
 {
   cout << string(RED) << find_free_inode(this->superblock, this->ext2_image) << string(DEFAULT) << endl;
 }
+

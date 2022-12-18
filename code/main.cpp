@@ -32,8 +32,9 @@ void shell(Ext2FileManager *fm)
     if (!std::strcmp(operation.c_str(), "cd"))
       fm->cd(argument.c_str());
 
-    else if (!std::strcmp(operation.c_str(), "ls"))
+    else if (!std::strcmp(operation.c_str(), "ls")){
       fm->ls();
+    }
 
     else if (!std::strcmp(operation.c_str(), "cat"))
       fm->cat(argument.c_str());
@@ -110,6 +111,11 @@ void shell(Ext2FileManager *fm)
       std::string new_directory_name = argument.substr(prox, argument.length() - prox);
 
       fm->rename(directory_name.c_str(), new_directory_name.c_str(), new_directory_name.size());
+    }
+
+    else if (!std::strcmp(operation.c_str(), "attr"))
+    {
+      fm->attr(argument.c_str());
     }
     
     else if (!std::strcmp(operation.c_str(), "cp"))

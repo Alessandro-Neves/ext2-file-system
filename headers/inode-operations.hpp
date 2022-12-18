@@ -36,4 +36,5 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
 
 void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* file_name, const char* path_destiny);
 
+std::string permission_i_mode(uint32_t i_mode);
 #endif

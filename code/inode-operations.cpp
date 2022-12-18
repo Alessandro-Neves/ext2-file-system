@@ -51,12 +51,12 @@ void write_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_grou
  */
 unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t inode)
 {
-  return (unsigned int) inode % superblock->s_inodes_per_group;
+  return (unsigned int)inode % superblock->s_inodes_per_group;
 }
 
 void print_ext2_inode(Ext2_Inode *inode)
 {
-  cout << "i_mode:\t\t\t" << std::hex << std::uppercase << (unsigned) inode->i_mode << std::dec << endl;
+  cout << "i_mode:\t\t\t" << std::hex << std::uppercase << (unsigned)inode->i_mode << std::dec << endl;
   cout << "i_uid:\t\t\t" << (unsigned)inode->i_uid << endl;
   cout << "i_size:\t\t\t" << (unsigned)inode->i_size << endl;
   cout << "i_atime:\t\t" << (unsigned)inode->i_atime << endl;
@@ -104,8 +104,10 @@ bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, 
     fseek(ext2_image, position, SEEK_SET);
     fread(content, 1, BLOCK_SIZE, ext2_image);
 
-    if(binary) (*destiny).write(reinterpret_cast<char*>(content), BLOCK_SIZE);
-    else (*destiny) << content;
+    if (binary)
+      (*destiny).write(reinterpret_cast<char *>(content), BLOCK_SIZE);
+    else
+      (*destiny) << content;
 
     if (exit)
       return false;
@@ -117,7 +119,7 @@ bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, 
   return true;
 }
 
-void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* file_name, const char* path_destiny)
+void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char *file_name, const char *path_destiny)
 {
   unsigned int bytes_to_read = inode->i_size;
   unsigned int blocks_read = 0;
@@ -128,7 +130,8 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
   uint32_t *indexes_level_2 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
   uint32_t *indexes_level_3 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
 
-  if(!directory_exists(path_destiny)) throw new FileManagerInfo("destination directory not exists.");
+  if (!directory_exists(path_destiny))
+    throw new FileManagerInfo("destination directory not exists.");
 
   std::string str_path = std::string(path_destiny) + std::string("/") + std::string(file_name);
   bool binary = (str_path.find(".txt") == std::string::npos) ? true : false;
@@ -310,10 +313,11 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
   }
 }
 
-Ext2_Inode* create_default_inode() {
-  Ext2_Inode* inode = (Ext2_Inode*) calloc (1, sizeof(Ext2_Inode));
+Ext2_Inode *create_default_inode()
+{
+  Ext2_Inode *inode = (Ext2_Inode *)calloc(1, sizeof(Ext2_Inode));
 
-  inode->i_mode = (uint16_t) 0x81A4;
+  inode->i_mode = (uint16_t)0x81A4;
 
   inode->i_gid = 0;
   inode->i_uid = 0;
@@ -335,7 +339,8 @@ Ext2_Inode* create_default_inode() {
   return inode;
 }
 
-char get_byte_of_inode_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_index, FILE* ext2_image){
+char get_byte_of_inode_bitmap(Ext2_Blocks_Group_Descriptor *bgd, uint32_t byte_index, FILE *ext2_image)
+{
   uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
   uint32_t absolut_byte_position = absolut_bitmap_position + byte_index;
 
@@ -346,7 +351,8 @@ char get_byte_of_inode_bitmap(Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_i
   return byte;
 }
 
-void set_byte_on_inode_bitmap(char byte, Ext2_Blocks_Group_Descriptor* bgd, uint32_t byte_order, FILE* ext2_image) {
+void set_byte_on_inode_bitmap(char byte, Ext2_Blocks_Group_Descriptor *bgd, uint32_t byte_order, FILE *ext2_image)
+{
   uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
   uint32_t absolut_byte_position = absolut_bitmap_position + byte_order;
 
@@ -354,21 +360,92 @@ void set_byte_on_inode_bitmap(char byte, Ext2_Blocks_Group_Descriptor* bgd, uint
   fwrite(&byte, 1, 1, ext2_image);
 }
 
-uint32_t find_free_inode(Ext2_Superblock* superblock, FILE* ext2_image) {
+uint32_t find_free_inode(Ext2_Superblock *superblock, FILE *ext2_image)
+{
 
   uint32_t absolute_byte_bitmap = 0;
-  for(int index = 0; index < 8; index++ ){
+  for (int index = 0; index < 8; index++)
+  {
     uint32_t bgd_absolute_address = block_group_descriptor_address(index);
-    Ext2_Blocks_Group_Descriptor* bgd = read_ext2_blocks_group_descriptor(ext2_image, bgd_absolute_address);
-    for(int byte_index = 0; byte_index < 256; byte_index++){
+    Ext2_Blocks_Group_Descriptor *bgd = read_ext2_blocks_group_descriptor(ext2_image, bgd_absolute_address);
+    for (int byte_index = 0; byte_index < 256; byte_index++)
+    {
       char byte = get_byte_of_inode_bitmap(bgd, byte_index, ext2_image);
-      if(byte != (char)0b11111111) {
+      if (byte != (char)0b11111111)
+      {
         int index_of_first_zero_bit = find_first_zero_bit(byte);
-        if(index_of_first_zero_bit != -1) return (absolute_byte_bitmap * 8) + index_of_first_zero_bit + 1; // +1: utilizado porque os inodes omeçam a partir de 1
-        else throw new Error("inode-operations::find_free_inode::0"); 
-      } else absolute_byte_bitmap ++;
+        if (index_of_first_zero_bit != -1)
+          return (absolute_byte_bitmap * 8) + index_of_first_zero_bit + 1; // +1: utilizado porque os inodes omeçam a partir de 1
+        else
+          throw new Error("inode-operations::find_free_inode::0");
+      }
+      else
+        absolute_byte_bitmap++;
     }
   }
 
   return -1;
+}
+
+std::string permission_i_mode(uint32_t i_mode)
+{
+  std::string str;
+
+  if (i_mode & (0x4000))
+    str = str.append("d");
+
+  else if (i_mode & (0x8000))
+    str = str.append("f");
+  else
+    str = str.append("-");
+
+  // user
+  if (i_mode & (0x0100))
+    str = str.append("r");
+  else
+    str = str.append("-");
+
+  if (i_mode & (0x0080))
+    str = str.append("w");
+  else
+    str = str.append("-");
+
+  if (i_mode & (0x0040))
+    str = str.append("x");
+  else
+    str = str.append("-");
+
+  // group
+  if (i_mode & (0x0020))
+    str = str.append("r");
+  else
+    str = str.append("-");
+
+  if (i_mode & (0x0010))
+    str = str.append("w");
+  else
+    str = str.append("-");
+
+  if (i_mode & (0x0008))
+    str = str.append("r");
+  else
+    str = str.append("-");
+
+  // other
+  if (i_mode & (0x0004))
+    str = str.append("r");
+  else
+    str = str.append("-");
+
+  if (i_mode & (0x0002))
+    str = str.append("w");
+  else
+    str = str.append("-");
+
+  if (i_mode & (0x0001))
+    str = str.append("r");
+  else
+    str = str.append("-");
+
+  return str;
 }

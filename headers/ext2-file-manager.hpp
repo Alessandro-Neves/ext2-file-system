@@ -23,6 +23,7 @@ class Ext2FileManager {
   void info_superblock();
   void info_blocks_group_descriptor(int bgd_index);
   void info_inode(unsigned int inode);
+  void attr(const char *directory_name);
 
   
 

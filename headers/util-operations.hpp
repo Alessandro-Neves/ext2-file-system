@@ -34,4 +34,6 @@ int find_first_zero_bit(char c);
 
 bool directory_exists(const char* name);
 
+void print_time_from_unix(unsigned int tempo);
+
 #endif
