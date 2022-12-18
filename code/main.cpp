@@ -121,8 +121,7 @@ void shell(Ext2FileManager *fm)
       int prox = argument.find(" ") + 1;
       std::string new_directory_name = argument.substr(prox, argument.length() - prox);
 
-      if (!fm->copy(directory_name.c_str(), new_directory_name.c_str()))
-        throw "directory or file not found";
+      fm->copy(directory_name.c_str(), new_directory_name.c_str());
     }
 
     else  throw new FileManagerInfo("command not found");

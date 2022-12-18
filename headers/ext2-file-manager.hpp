@@ -14,6 +14,11 @@ class Ext2FileManager {
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor = NULL;
   vector<Ext2_Directory> history_navigation;
 
+  Ext2_Inode* _read_ext2_inode(uint32_t inode);
+  void release_blocks(uint32_t *blocks, int blocks_size, uint32_t *bytes_to_remove);
+  void release_blocks_of_inode(Ext2_Inode* inode);
+
+
   public:
   void info_superblock();
   void info_blocks_group_descriptor(int bgd_index);
@@ -22,9 +27,9 @@ class Ext2FileManager {
   
 
   public:
-  bool cd(const char *directory_name);
-  bool cat(const char *directory_name);
-  bool copy(const char *origin_name, const char* destiny_name);
+  void cd(const char *directory_name);
+  void cat(const char *directory_name);
+  void copy(const char *origin_name, const char* destiny_name);
   void touch(const char *directory_name, unsigned int directory_name_length);
   bool rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length);
 

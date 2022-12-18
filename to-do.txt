@@ -1,3 +1,6 @@
 - Verificar corretude set e print bit no bitmap de bloco
 - Apagar os block do inode na função rm
 - Atualizar as propriedades do superbloco e bgd
+
+
+-> setar corretamento i_blocks;

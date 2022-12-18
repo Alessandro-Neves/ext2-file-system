@@ -88,7 +88,7 @@ static unsigned int last_position_of_content_on_block(unsigned int bytes_to_read
   return bytes_to_read >= BLOCK_SIZE ? BLOCK_SIZE : bytes_to_read;
 }
 
-bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, unsigned int *bytes_to_read, unsigned int *blocks_read, ofstream *destiny)
+bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, unsigned int *bytes_to_read, unsigned int *blocks_read, ofstream *destiny, bool binary)
 {
   char *content = (char *)malloc(sizeof(char) * BLOCK_SIZE);
   int position;
@@ -104,9 +104,8 @@ bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, 
     fseek(ext2_image, position, SEEK_SET);
     fread(content, 1, BLOCK_SIZE, ext2_image);
 
-    //(*destiny) << content;
-
-    (*destiny).write(reinterpret_cast<char*>(content), BLOCK_SIZE);
+    if(binary) (*destiny).write(reinterpret_cast<char*>(content), BLOCK_SIZE);
+    else (*destiny) << content;
 
     if (exit)
       return false;
@@ -129,13 +128,16 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
   uint32_t *indexes_level_2 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
   uint32_t *indexes_level_3 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
 
-  ofstream host_file(path, std::ios::binary | std::ios::app);
+  std::string str_path(path);
+  bool binary = (str_path.find(".txt") == std::string::npos) ? true : false;
+
+  ofstream host_file(path, std::ios::out | std::ios::binary | std::ios::app);
 
   if (!host_file.is_open())
     return;
 
   /* impressão niveis de acesso direto */
-  if (!copy_array_of_blocks(ext2_image, inode->i_block, 12, &bytes_to_read, &blocks_read, &host_file))
+  if (!copy_array_of_blocks(ext2_image, inode->i_block, 12, &bytes_to_read, &blocks_read, &host_file, binary))
   {
     host_file.close();
     return;
@@ -145,7 +147,7 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
   position = BLOCK_OFFSET((inode->i_block)[12]);
   fseek(ext2_image, position, SEEK_SET);
   fread(indexes_level_1, 1, BLOCK_SIZE, ext2_image);
-  if (!copy_array_of_blocks(ext2_image, indexes_level_1, 256, &bytes_to_read, &blocks_read, &host_file))
+  if (!copy_array_of_blocks(ext2_image, indexes_level_1, 256, &bytes_to_read, &blocks_read, &host_file, binary))
   {
     host_file.close();
     return;
@@ -161,7 +163,7 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
     position = BLOCK_OFFSET(indexes_level_2[i]);
     fseek(ext2_image, position, SEEK_SET);
     fread(indexes_level_1, 1, BLOCK_SIZE, ext2_image);
-    if (!copy_array_of_blocks(ext2_image, indexes_level_1, 256, &bytes_to_read, &blocks_read, &host_file))
+    if (!copy_array_of_blocks(ext2_image, indexes_level_1, 256, &bytes_to_read, &blocks_read, &host_file, binary))
     {
       host_file.close();
       return;
@@ -184,7 +186,7 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
       position = BLOCK_OFFSET(indexes_level_2[j]);
       fseek(ext2_image, position, SEEK_SET);
       fread(indexes_level_1, 1, BLOCK_SIZE, ext2_image);
-      if (!copy_array_of_blocks(ext2_image, indexes_level_1, 256, &bytes_to_read, &blocks_read, &host_file))
+      if (!copy_array_of_blocks(ext2_image, indexes_level_1, 256, &bytes_to_read, &blocks_read, &host_file, binary))
       {
         host_file.close();
         return;
@@ -200,31 +202,31 @@ bool _print_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes
 
   bool exit = false;
 
-  system("clear");
-  cout << string(BLUE) << "[ " << ((*blocks_read) / 10) + 1 << " of " << (*bytes_to_read) / ((BLOCK_SIZE * 10)) + 1 << " ]" << string(DEFAULT) << endl
-       << endl;
+  // system("clear");
+  // cout << string(BLUE) << "[ " << ((*blocks_read) / 10) + 1 << " of " << (*bytes_to_read) / ((BLOCK_SIZE * 10)) + 1 << " ]" << string(DEFAULT) << endl
+  //      << endl;
 
   for (int i = 0; i < qtd_indexes; i++)
   {
     if ((*bytes_to_read) <= BLOCK_SIZE)
       exit = true;
 
-    if ((*blocks_read) % 10 == 0 && (*blocks_read) > 0)
-    {
-      cout << string(GREEN) << endl
-           << "[ press ANY key to read more, ESQ to exit ]\t" << string(DEFAULT);
-      system("stty raw");
-      if (getchar() == 27)
-      {
-        system("stty cooked");
-        system("clear");
-        return false;
-      }
-      system("stty cooked");
-      system("clear");
-      cout << string(BLUE) << "[ " << (*blocks_read / 10) + 1 << " of " << total / ((BLOCK_SIZE * 10)) + 1 << " ]" << string(DEFAULT) << endl
-           << endl;
-    }
+    // if ((*blocks_read) % 10 == 0 && (*blocks_read) > 0)
+    // {
+    //   cout << string(GREEN) << endl
+    //        << "[ press ANY key to read more, ESQ to exit ]\t" << string(DEFAULT);
+    //   system("stty raw");
+    //   if (getchar() == 27)
+    //   {
+    //     system("stty cooked");
+    //     system("clear");
+    //     return false;
+    //   }
+    //   system("stty cooked");
+    //   system("clear");
+    //   cout << string(BLUE) << "[ " << (*blocks_read / 10) + 1 << " of " << total / ((BLOCK_SIZE * 10)) + 1 << " ]" << string(DEFAULT) << endl
+    //        << endl;
+    // }
 
     position = BLOCK_OFFSET(indexes[i]);
     fseek(ext2_image, position, SEEK_SET);
@@ -232,13 +234,13 @@ bool _print_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes
 
     content[last_position_of_content_on_block(*bytes_to_read)] = '\0';
 
-    cout << content << endl;
+    cout << content;
 
     if (exit)
     {
-      cout << string(YELLOW) << "[ end of file, press any key to exit ]\t" << string(DEFAULT);
-      cin.get();
-      system("clear");
+      // cout << string(YELLOW) << "[ end of file, press any key to exit ]\t" << string(DEFAULT);
+      // cin.get();
+      // system("clear");
       return false;
     };
     (*bytes_to_read) -= 1024;
@@ -262,8 +264,6 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
   /* impressão niveis de acesso direto */
   if (!_print_array_of_blocks(ext2_image, inode->i_block, 12, &bytes_to_read, &blocks_read, inode->i_size))
     return;
-
-  return;
 
   /* impressão niveis simples de indexes */
   position = BLOCK_OFFSET((inode->i_block)[12]);
