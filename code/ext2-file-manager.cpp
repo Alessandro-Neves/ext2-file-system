@@ -184,12 +184,16 @@ bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name
     const char *iterator_directory_name = (const char *)(*it).name;
     if (!strcmp(directory_name, iterator_directory_name))
     {
-      directory_to_remove = &(*it);
+      directory_to_remove = (Ext2_Directory*) calloc(1, sizeof(Ext2_Directory));
+      memcpy(directory_to_remove, &(*it), sizeof(Ext2_Directory));
       break;
     }
     else
       index_of_directory++;
   }
+
+  if(!directory_to_remove) throw new FileManagerInfo("file not found.");
+  if(directory_to_remove->file_type != 1) throw new FileManagerInfo("it's not a file.");
 
   directories.erase(directories.begin() + index_of_directory);
 
@@ -202,6 +206,8 @@ bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name
     fwrite(&(*it), 1, 8 + bytes_to_4_bytes_groups_length((*it).name_len), this->ext2_image);
     intern_position += (*it).rec_len;
   }
+  cout << string(RED) << index_of_directory << directories.size() << string(DEFAULT) << endl;
+  print_directories(directories);
 
   this->set_bit_of_inode_bitmap(directory_to_remove->inode, false);
 
