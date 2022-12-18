@@ -38,6 +38,9 @@ void shell(Ext2FileManager *fm)
     else if (!std::strcmp(operation.c_str(), "cat"))
       fm->cat(argument.c_str());
 
+    else if (!std::strcmp(operation.c_str(), "rm"))
+      fm->rm(argument.c_str(), argument.size());
+
     else if (!std::strcmp(operation.c_str(), "print-inode"))
     {
       int inode = std::stoi(argument);

@@ -178,12 +178,46 @@ bool Ext2FileManager::rename(const char *directory_name, const char *new_directo
 bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name_length) {
     Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
     Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
+    vector<Ext2_Directory> directories = read_ext2_directories(this->ext2_image, actual_inode);
 
-    Ext2_Directory *directory = search_directory(this->ext2_image, actual_inode, directory_name);
-    if (!directory)
-      return false;
+    int index_of_directory = 0;
+    Ext2_Directory* directory_to_remove = NULL;
 
-    
+    for(vector<Ext2_Directory>::iterator it = directories.begin(); it != directories.end(); it++){
+      const char* iterator_directory_name = (const char*) (*it).name;
+      if(!strcmp(directory_name, iterator_directory_name)){
+        directory_to_remove = &(*it);
+        break;
+      } else index_of_directory ++;
+    }
+
+    if(directory_to_remove) print_directory(*directory_to_remove);
+    else cout << "não encontrado!" << endl;
+
+    directories.erase(directories.begin() + index_of_directory);
+
+    directories.back().rec_len += directory_to_remove->rec_len;
+
+    uint32_t intern_position = 0;
+    for(vector<Ext2_Directory>::iterator it = directories.begin(); it != directories.end(); it++){
+      fseek(this->ext2_image, BLOCK_OFFSET(actual_inode->i_block[0]) + intern_position, SEEK_SET);
+      fwrite(&(*it), 1, 8 + bytes_to_4_bytes_groups_length((*it).name_len), this->ext2_image);
+      intern_position += (*it).rec_len;
+    }
+
+    this->set_bit_of_inode_bitmap(directory_to_remove->inode, false);
+
+    /* Atualizando descritor do grupo */
+    uint32_t bgd_order = block_group_from_inode(this->superblock, directory_to_remove->inode);
+    Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(bgd_order));
+    blocks_group_descriptor_of_inode->bg_free_inodes_count--;
+    print_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode);
+    write_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode, this->ext2_image, block_group_descriptor_address(bgd_order));
+
+    /* Atualizando superbloco */
+    this->superblock->s_free_inodes_count--;  
+    write_ext2_superblock(this->superblock, this->ext2_image);
+
 }
 
 bool Ext2FileManager::copy(const char *origin_name, const char* destiny_name)
