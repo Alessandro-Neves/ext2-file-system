@@ -117,7 +117,7 @@ bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, 
   return true;
 }
 
-void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* path)
+void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* file_name, const char* path_destiny)
 {
   unsigned int bytes_to_read = inode->i_size;
   unsigned int blocks_read = 0;
@@ -128,10 +128,12 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
   uint32_t *indexes_level_2 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
   uint32_t *indexes_level_3 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
 
-  std::string str_path(path);
+  if(!directory_exists(path_destiny)) throw new FileManagerInfo("destination directory not exists.");
+
+  std::string str_path = std::string(path_destiny) + std::string("/") + std::string(file_name);
   bool binary = (str_path.find(".txt") == std::string::npos) ? true : false;
 
-  ofstream host_file(path, std::ios::out | std::ios::binary | std::ios::app);
+  ofstream host_file(str_path.c_str(), std::ios::out | std::ios::binary | std::ios::app);
 
   if (!host_file.is_open())
     return;

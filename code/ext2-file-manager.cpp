@@ -170,7 +170,7 @@ bool Ext2FileManager::rename(const char *directory_name, const char *new_directo
   return true;
 }
 
-bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name_length)
+bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name_length, bool info)
 {
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
   Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
@@ -191,11 +191,6 @@ bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name
       index_of_directory++;
   }
 
-  if (directory_to_remove)
-    print_directory(*directory_to_remove);
-  else
-    cout << "não encontrado!" << endl;
-
   directories.erase(directories.begin() + index_of_directory);
 
   directories.back().rec_len += directory_to_remove->rec_len;
@@ -213,9 +208,11 @@ bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name
   /* liberando os blocos utilizados pelo arquivo */
   Ext2_Inode *inode_of_dir_remove = _read_ext2_inode(directory_to_remove->inode);
   this->release_blocks_of_inode(inode_of_dir_remove);
+
+  if(info) print_directory(*directory_to_remove);
 }
 
-void Ext2FileManager::copy(const char *origin_name, const char *destiny_name)
+void Ext2FileManager::copy(const char *origin_name, const char *destiny_name, bool info)
 {
 
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
@@ -230,7 +227,15 @@ void Ext2FileManager::copy(const char *origin_name, const char *destiny_name)
   Ext2_Blocks_Group_Descriptor *bgd_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));
 
   Ext2_Inode *directory_inode = read_ext2_inode(this->ext2_image, bgd_of_inode, inode_order_on_block_group(this->superblock, directory->inode));
-  copy_inode_blocks_content(this->ext2_image, directory_inode, destiny_name);
+  copy_inode_blocks_content(this->ext2_image, directory_inode, directory->name, destiny_name);
+
+  if(info) cout << directory->name << " copied to " << destiny_name << endl; 
+}
+
+void Ext2FileManager::move(const char *origin_name, const char *destiny_name){
+  this->copy(origin_name, destiny_name, false);
+  this->rm(origin_name, string(origin_name).size(), false);
+  cout << origin_name << " moved to " << destiny_name << endl;
 }
 
 void Ext2FileManager::cat(const char *directory_name)

@@ -39,7 +39,7 @@ void shell(Ext2FileManager *fm)
       fm->cat(argument.c_str());
 
     else if (!std::strcmp(operation.c_str(), "rm"))
-      fm->rm(argument.c_str(), argument.size());
+      fm->rm(argument.c_str(), argument.size(), true);
 
     else if (!std::strcmp(operation.c_str(), "print-inode"))
     {
@@ -121,7 +121,18 @@ void shell(Ext2FileManager *fm)
       int prox = argument.find(" ") + 1;
       std::string new_directory_name = argument.substr(prox, argument.length() - prox);
 
-      fm->copy(directory_name.c_str(), new_directory_name.c_str());
+      fm->copy(directory_name.c_str(), new_directory_name.c_str(), true);
+    }
+
+    else if (!std::strcmp(operation.c_str(), "mv"))
+    {
+
+      std::string directory_name = argument.substr(0, argument.find(" "));
+
+      int prox = argument.find(" ") + 1;
+      std::string new_directory_name = argument.substr(prox, argument.length() - prox);
+
+      fm->move(directory_name.c_str(), new_directory_name.c_str());
     }
 
     else  throw new FileManagerInfo("command not found");

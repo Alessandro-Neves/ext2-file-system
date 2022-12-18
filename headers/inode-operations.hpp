@@ -34,4 +34,6 @@ uint32_t find_free_inode(Ext2_Superblock* superblock, FILE* ext2_image);
 
 void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* path);
 
+void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* file_name, const char* path_destiny);
+
 #endif

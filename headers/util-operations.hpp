@@ -32,4 +32,6 @@ char set_bit(char c, int index, bool value);
 */ 
 int find_first_zero_bit(char c);
 
+bool directory_exists(const char* name);
+
 #endif

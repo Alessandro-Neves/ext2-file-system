@@ -1,4 +1,6 @@
+#include <sys/stat.h>
 #include "../headers/util-operations.hpp"
+#include "../headers/colors.hpp"
 
 bool has_null(const char *array, int size) {
   for (int i = 0; i < size; i++)
@@ -36,4 +38,10 @@ int find_first_zero_bit(char c) {
     }
   }
   return -1; // Nenhum bit 0 encontrado
+}
+
+bool directory_exists(const char* name){
+  struct stat st;
+  if (stat(name, &st) == 0 && (st.st_mode & S_IFDIR)) return true;
+  else return false;
 }
