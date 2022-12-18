@@ -32,7 +32,7 @@ class Ext2FileManager {
   void copy(const char *origin_name, const char *destiny_name, bool info);
   void move(const char *origin_name, const char* destiny_name);
   void touch(const char *directory_name, unsigned int directory_name_length);
-  bool rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length);
+  void rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length);
 
   bool rm(const char *directory_name, unsigned int directory_name_length, bool info);
   void ls();
