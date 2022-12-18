@@ -470,8 +470,8 @@ void Ext2FileManager::attr(const char *directory_name){
   Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
 
   Ext2_Directory *directory = search_directory(this->ext2_image, actual_inode, directory_name);
-  if (!directory)
-    return;
+
+  if(!directory) throw new FileManagerInfo("not found.");
 
   unsigned int directory_inode_block_group = block_group_from_inode(this->superblock, directory->inode);
   Ext2_Blocks_Group_Descriptor *bgd_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(directory_inode_block_group));
@@ -479,15 +479,32 @@ void Ext2FileManager::attr(const char *directory_name){
   
   std::string permission = permission_i_mode(directory_inode->i_mode); 
 
-  cout << "permissões\t" << "uid\t" << "gid\t" << "tamanho\t\t" << "modificado em\t" << endl;
+  float size_fk = (float) directory_inode->i_size / 1024;
+  float size_fm = (float) directory_inode->i_size / (1024 * 1024);
+
+  cout << "permissions\t" << "uid\t" << "gid\t" << "size\t\t\t" << "modified on\t" << endl;
   cout << permission << "\t" << (unsigned)directory_inode->i_uid << "\t";
-  cout << (unsigned)directory_inode->i_gid << "\t" << (unsigned)directory_inode->i_size;
+  cout << (unsigned)directory_inode->i_gid << "\t";
+  if(directory_inode->i_size < 1024) cout << (unsigned) directory_inode->i_size << " bytes";
+  else if(directory_inode->i_size < (1024 * 1024)) cout << std::setprecision(2) << size_fk << " KiB";
+  else cout << std::setprecision(2) << size_fm << " MiB  ";
   cout << "\t\t"; 
   print_time_from_unix((unsigned)directory_inode->i_mtime);
 }
 
-void Ext2FileManager::test()
-{
-  cout << string(RED) << find_free_inode(this->superblock, this->ext2_image) << string(DEFAULT) << endl;
-}
+void Ext2FileManager::info(){
+  uint32_t g_count = this->superblock->s_blocks_per_group/BLOCK_SIZE;
+  uint32_t i_table = this->superblock->s_inodes_per_group/g_count;
 
+  cout << "Volume name.....: " << this->superblock->s_volume_name << endl;
+  cout << "Image size......: " << this->superblock->s_blocks_count << " KiB" << endl;
+  cout << "Free space......: " << this->superblock->s_free_blocks_count << " KiB" << endl;
+  cout << "Free inodes.....: " << this->superblock->s_free_inodes_count << endl;
+  cout << "Free blocks.....: " << this->superblock->s_free_blocks_count << endl;
+  cout << "Blocks size.....: " << BLOCK_SIZE << " bytes" << endl;
+  cout << "Inode size......: " << this->superblock->s_inode_size << " bytes" << endl;
+  cout << "Group count.....: " << g_count << endl;
+  cout << "Group size......: " << this->superblock->s_blocks_per_group << " blocks" << endl;
+  cout << "Group inodes....: " << this->superblock->s_inodes_per_group << " inodes" << endl;
+  cout << "Inodetable size.: " << i_table << " blocks" << endl;
+}

@@ -63,19 +63,22 @@ bool directory_exists(const char *name)
 
 void print_time_from_unix(unsigned int tempo)
 {
-    // std::cout << tempo << std::endl;
-    // return;
+    std::cout << tempo << std::endl;  return;
 
-    time_t epch = tempo;
-    char time_buf[50];
-    strftime(time_buf, sizeof(time_buf), "%a %Y-%m-%d %H:%M:%S %Z", gmtime(&epch));
-    std::cout << time_buf << std::endl;
+    int timestamp = tempo;
 
-    // time_t _tempo = tempo;
+    // Convert the timestamp to a time_t variable
+    time_t time = timestamp;
 
-    // struct tm *ptm = localtime(&_tempo);
-    // printf("%d/%d/%d %d:%d",
-    //     ptm->tm_mday, ptm->tm_mon + 1, (ptm->tm_year + 1900),
-    //     ptm->tm_hour, ptm->tm_min);
-    // printf("\n");
+    // Convert the time_t variable to a tm structure
+    tm* timeinfo = localtime(&time);
+
+    // Create a buffer to hold the formatted date and time string
+    char buffer[20];
+
+    // Use strftime to format the date and time
+    strftime(buffer, 20, "%d/%m/%Y %H:%M", timeinfo);
+
+    // Print the formatted string
+    std::cout << buffer << std::endl;
 }

@@ -24,7 +24,7 @@ class Ext2FileManager {
   void info_blocks_group_descriptor(int bgd_index);
   void info_inode(unsigned int inode);
   void attr(const char *directory_name);
-
+  void info();
   
 
   public:
@@ -44,7 +44,6 @@ class Ext2FileManager {
   void print_block_bitmap(unsigned int inode);
   void print_byte_on_bitmap_of_inode(unsigned int inode);
   void print_byte_on_bitmap_of_block(unsigned int block);
-  void test();
 
   std::string pwd();
   Ext2FileManager(FILE *ext2_image);
