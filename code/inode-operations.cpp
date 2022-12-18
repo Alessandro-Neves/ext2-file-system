@@ -104,7 +104,9 @@ bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, 
     fseek(ext2_image, position, SEEK_SET);
     fread(content, 1, BLOCK_SIZE, ext2_image);
 
-    (*destiny) << content << endl;
+    //(*destiny) << content;
+
+    (*destiny).write(reinterpret_cast<char*>(content), BLOCK_SIZE);
 
     if (exit)
       return false;
@@ -127,7 +129,7 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char* 
   uint32_t *indexes_level_2 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
   uint32_t *indexes_level_3 = (uint32_t *)malloc(sizeof(uint32_t) * 256);
 
-  ofstream host_file(path);
+  ofstream host_file(path, std::ios::binary | std::ios::app);
 
   if (!host_file.is_open())
     return;
