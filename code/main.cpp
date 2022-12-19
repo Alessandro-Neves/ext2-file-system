@@ -175,6 +175,10 @@ int main()
 
     // fm->test();
 
+    // fm->info_inode(2);
+
+    fm->info_superblock();
+
     shell(fm);
   }
   catch (const char *str) /* tratamento de exceções */

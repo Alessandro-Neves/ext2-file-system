@@ -14,7 +14,7 @@ using namespace std;
 void print_array(uint32_t *array, int size)
 {
   for (int i = 0; i < size; i++)
-    cout << " " << array[i];
+    cout << "pointer[" << i << "]:  " << array[i] << endl;
 }
 
 /**
@@ -56,31 +56,23 @@ unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t in
 
 void print_ext2_inode(Ext2_Inode *inode)
 {
-  cout << "i_mode:\t\t\t" << std::hex << std::uppercase << (unsigned)inode->i_mode << std::dec << endl;
-  cout << "i_uid:\t\t\t" << (unsigned)inode->i_uid << endl;
-  cout << "i_size:\t\t\t" << (unsigned)inode->i_size << endl;
-  cout << "i_atime:\t\t" << (unsigned)inode->i_atime << endl;
-  cout << "i_ctime:\t\t" << (unsigned)inode->i_ctime << endl;
-  cout << "i_mtime:\t\t" << (unsigned)inode->i_mtime << endl;
-  cout << "i_dtime:\t\t" << (unsigned)inode->i_dtime << endl;
-  cout << "i_gid:\t\t\t" << (unsigned)inode->i_gid << endl;
-  cout << "i_links_count:\t\t" << (unsigned)inode->i_links_count << endl;
-  cout << "i_gid:\t\t\t" << (unsigned)inode->i_gid << endl;
-  cout << "i_flags:\t\t" << (unsigned)inode->i_flags << endl;
-  cout << "i_blocks:\t\t" << (unsigned)inode->i_blocks << endl;
-  cout << "osd1:\t\t\t" << (unsigned)inode->osd1 << endl;
-  cout << "i_block:\t\t"
-       << "[";
+  cout << "i_mode:  " << "0x" << std::hex << (unsigned)inode->i_mode << std::dec << endl;
+  cout << "user_id:  " << (unsigned)inode->i_uid << endl;
+  cout << "lower 32-bit file size:  " << (unsigned)inode->i_size << endl;
+  cout << "access time:   " << (unsigned)inode->i_atime << endl;
+  cout << "creation time:  " << (unsigned)inode->i_ctime << endl;
+  cout << "modification time:  " << (unsigned)inode->i_mtime << endl;
+  cout << "deletion time:  " << (unsigned)inode->i_dtime << endl;
+  cout << "group id:  " << (unsigned)inode->i_gid << endl;
+  cout << "link count inode:  " << (unsigned)inode->i_links_count << endl;
+  cout << "512-bytes blocks:  " << (unsigned)inode->i_blocks << endl;
+  cout << "ext2_flags:  " << (unsigned)inode->i_flags << endl;
+  cout << "reserved (Linux):  " << (unsigned)inode->osd1 << endl;
   print_array(inode->i_block, 15);
-  cout << " ](15)" << endl;
-  cout << "i_generation:\t\t" << (unsigned)inode->i_generation << endl;
-  cout << "i_file_acl:\t\t" << (unsigned)inode->i_file_acl << endl;
-  cout << "i_dir_acl:\t\t" << (unsigned)inode->i_dir_acl << endl;
-  cout << "i_faddr:\t\t" << (unsigned)inode->i_faddr << endl;
-  cout << "i_osd2:\t\t\t"
-       << "[";
-  print_array(inode->i_osd2, 3);
-  cout << " ](3)" << endl;
+  cout << "file version (nfs):  " << (unsigned)inode->i_generation << endl;
+  cout << "block number extended attributes:  " << (unsigned)inode->i_file_acl << endl;
+  cout << "higher 32-bit file size:  " << (unsigned)inode->i_dir_acl << endl;
+  cout << "location file fragment:  " << (unsigned)inode->i_faddr << endl;
 }
 
 static unsigned int last_position_of_content_on_block(unsigned int bytes_to_read)
