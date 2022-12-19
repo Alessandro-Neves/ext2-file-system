@@ -60,7 +60,7 @@ public:
   void rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length);
 
   /* realiza a remoção de um determinado arquivo, executando antes as verificações necessárias */
-  bool rm(const char *directory_name, unsigned int directory_name_length, bool info);
+  void rm(const char *directory_name, unsigned int directory_name_length, bool info);
 
   /* realiza a cópia de um determinado arquivo interno para um determinado diretório do sistema do usuário */
   void copy(const char *origin_name, const char *destiny_name, bool info);

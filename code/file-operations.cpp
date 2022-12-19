@@ -10,14 +10,8 @@ using namespace std;
 FILE *get_file(const char *address)
 {
   FILE *file = fopen(address, "rb+");
-  if (file == NULL)
-  {
-    cout << string(RED) << "\n[ File " << address << " is not valid ]" << string(DEFAULT) << endl;
-    new Error("get_file");
-  }
-  else
-    cout << string(GREEN) << "\n[ File " << address << " read ]" << string(DEFAULT) << endl;
-
+  if (file == NULL) cout << string(RED) << "\n[ File " << address << " is not valid ]" << string(DEFAULT) << endl << endl;
+  else  cout << string(GREEN) << "\n[ File " << address << " read ]" << string(DEFAULT) << endl;
   return file;
 }
 

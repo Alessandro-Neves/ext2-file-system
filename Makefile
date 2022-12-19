@@ -25,6 +25,8 @@ clear:
 	rm -rf *.exe
 
 mount:
-	sudo umount /mnt 
 	sudo mount ext2.img /mnt
 	ls /mnt
+
+umount:
+	sudo umount /mnt 

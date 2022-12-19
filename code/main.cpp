@@ -1,3 +1,47 @@
+/**
+ * @file main.cpp
+ * @author Alessandro Neves dos Santos (you@domain.com)
+ * @author Alan Lima Marques
+ * @author Joaquim Caetano Junior
+ * 
+ * Shell e Gerenciador/Manipulador de arquivos Ext2.
+ * Para compilar e executar o programa, execute:
+ *    $ make compile && make run
+ * ou para compilar, executar e redefinir imagem Ext2:
+ *    $ make
+ * 
+ * Image address: caminho absoluto para a imagem com o sistema
+ * de arquivo Ext2.
+ * 
+ * comandos:
+ *    - info
+ *    - print superblock
+ *    - print groups
+ *    - ls
+ *    - print inode <number>
+ *    - print group <number>
+ *    - cd <directory_name>
+ *    - touch <directory_name>
+ *    - cat <file_name>
+ *    - rename <file/directory_name> <new_name>
+ *    - rm <file_name>
+ *    - cp <file_name> <destiny_directory>
+ *    - mv <file_name> <destiny_directory>
+ *    - pwd
+ *    - attr
+ * 
+ * outros:
+ *    - clear
+ *    - exit
+ * 
+ * comandos dev:
+ *    - bitmapi <inode>
+ *    - bitmapb <block>
+ *    - seti <inode>
+ *    - setb <block>
+ * 
+ */
+
 #include "../headers/colors.hpp"
 #include "../headers/ext2.hpp"
 #include "../headers/file-operations.hpp"
@@ -15,32 +59,36 @@ void shell(Ext2FileManager *fm);
 
 int main()
 {
-  FILE *ext2_image;
+  FILE *ext2_image = NULL;
   Ext2FileManager *fm;
 
-  try
-  {
-    /* pegar endereço da image ext2 no host */
-    char *input = (char *)malloc(sizeof(char) * 100);
-    cout << "[ Image address ]:\t";
-    cin >> input;
-    //strcpy(input, "./ext2.img"); /* !!!! apagar antes de entregar e descomentar as duas linhas anteriores !!!! */
+  
+  while(1){
+    try{
+        /* pegar endereço da image ext2 no host */
+        char *input = (char *)malloc(sizeof(char) * 100);
+        cout << "[ Image address ]:\t";
+        cin >> input;
 
-    /* ler imagem ext2 do host */
-    ext2_image = get_file((const char *)input);
+        //strcpy(input, "./ext2.img");
 
-    fm = new Ext2FileManager(ext2_image);
+        /* ler imagem ext2 do host */
+        ext2_image = get_file((const char *)input);
 
-    shell(fm);
-  }
-  catch (const char *str) /* tratamento de exceções */
-  {
-    cout << string(RED) << str << string(DEFAULT) << endl;
-  }
-  catch (Error *error)
-  {
-    cout << endl
-         << string(RED) << "[ error::" << error->message << " ]" << string(DEFAULT) << endl;
+        if(ext2_image){
+          fm = new Ext2FileManager(ext2_image);
+          shell(fm);
+        }
+      }
+      catch (const char *str) /* tratamento de exceções */
+      {
+        cout << string(RED) << str << string(DEFAULT) << endl;
+      }
+      catch (Error *error)
+      {
+        cout << endl
+            << string(RED) << "[ error::" << error->message << " ]" << string(DEFAULT) << endl;
+      }
   }
 
   return 0;
@@ -65,12 +113,14 @@ void shell(Ext2FileManager *fm)
 
       operation = input.substr(0, input.find(" "));
 
+      bool has_argument = (input.find(" ") != std::string::npos);
       int pos = input.find(" ") + 1;
       argument = input.substr(pos, input.length() - pos);
 
-      if (!std::strcmp(operation.c_str(), "cd"))
+      if (!std::strcmp(operation.c_str(), "cd")){
+        if(argument.size() == 0 || !has_argument)  throw new FileManagerInfo("invalid sintax.");
         fm->cd(argument.c_str());
-
+      }
       else if (!std::strcmp(operation.c_str(), "ls"))
       {
         fm->ls();
@@ -81,12 +131,14 @@ void shell(Ext2FileManager *fm)
         if(pwd.size() > 1)  pwd.pop_back();
         cout << pwd << endl;
       }
-      else if (!std::strcmp(operation.c_str(), "cat"))
+      else if (!std::strcmp(operation.c_str(), "cat")){
+        if(argument.size() == 0 || !has_argument)  throw new FileManagerInfo("invalid sintax.");
         fm->cat(argument.c_str());
-
-      else if (!std::strcmp(operation.c_str(), "rm"))
+      }
+      else if (!std::strcmp(operation.c_str(), "rm")){
+        if(argument.size() == 0 || !has_argument)  throw new FileManagerInfo("invalid sintax.");
         fm->rm(argument.c_str(), argument.size(), true);
-
+      }
       else if (!std::strcmp(operation.c_str(), "info"))
         fm->info();
 
@@ -125,7 +177,7 @@ void shell(Ext2FileManager *fm)
         }
 
         else
-          throw new FileManagerInfo("command not found");
+          throw new FileManagerInfo("invalid sintax.");
       }
 
       else if (!std::strcmp(operation.c_str(), "bitmapi"))
@@ -166,6 +218,7 @@ void shell(Ext2FileManager *fm)
 
       else if (!std::strcmp(operation.c_str(), "touch"))
       {
+        if(argument.size() == 0 || !has_argument)  throw new FileManagerInfo("invalid sintax.");
         fm->touch(argument.c_str(), argument.size());
       }
 
@@ -175,6 +228,7 @@ void shell(Ext2FileManager *fm)
       else if (!std::strcmp(operation.c_str(), "rename"))
       {
 
+        if(argument.size() == 0 || !has_argument)  throw new FileManagerInfo("invalid sintax.");
         std::string directory_name = argument.substr(0, argument.find(" "));
 
         int prox = argument.find(" ") + 1;
@@ -190,7 +244,7 @@ void shell(Ext2FileManager *fm)
 
       else if (!std::strcmp(operation.c_str(), "cp"))
       {
-
+        if(argument.size() == 0 || !has_argument)  throw new FileManagerInfo("invalid sintax.");
         std::string directory_name = argument.substr(0, argument.find(" "));
 
         int prox = argument.find(" ") + 1;
@@ -201,7 +255,7 @@ void shell(Ext2FileManager *fm)
 
       else if (!std::strcmp(operation.c_str(), "mv"))
       {
-
+        if(argument.size() == 0 || !has_argument)  throw new FileManagerInfo("invalid sintax.");
         std::string directory_name = argument.substr(0, argument.find(" "));
 
         int prox = argument.find(" ") + 1;
@@ -209,6 +263,9 @@ void shell(Ext2FileManager *fm)
 
         fm->move(directory_name.c_str(), new_directory_name.c_str());
       }
+
+      else if (!std::strcmp(operation.c_str(), "exit"))
+        exit(0);
 
       else
         throw new FileManagerInfo("command not found");
