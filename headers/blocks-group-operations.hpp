@@ -7,30 +7,21 @@
 
 using namespace std;
 
-/**
- * @brief realiza a leitura do descritor de grupo de blocos do sistema de arquivos e mapeia para Ext2_Blocks_Group_Descriptor
- * 
- * @param ext2_image imagem do sistema de arquivos
- * @return Ext2_Blocks_Group_Descriptor* estrutura com as informações do descritor de grupo de blocos
- */
+/* realiza a leitura e retorna um descritor de grupo dentro da imagem  */
 Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image, uint32_t at_position);
 
-/**
- * @brief imprime os dados do descritor de grupo de blocos na saída
- * @param superblock estrutura com dados do descritor de grupo de blocos
- */
+/* realiza a impressão de dados do descritor de grupo */
 void print_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* blocks_group_descriptor);
 
-unsigned int blocks_group_count(Ext2_Superblock* superblock);
+/* retorna o endereço absoluto do descritor de grupo na imagem */
+unsigned int block_group_descriptor_from_inode(Ext2_Superblock* superblock, unsigned int inode_order);
 
-unsigned int size_of_blocks_group_descriptor_list(Ext2_Superblock* superblock);
+uint32_t block_group_descriptor_address(int bgd_index);
 
-unsigned int block_group_descripton_from_inode(Ext2_Superblock* superblock, unsigned int inode_order);
+/* retorna o index do descritor de grupo ao qual o 'inode' pertence */
+unsigned int block_group_from_inode(Ext2_Superblock* superblock, unsigned int inode);
 
-uint32_t block_group_descriptor_address(int order);
-
-unsigned int block_group_from_inode(Ext2_Superblock* superblock, unsigned int inode_order);
-
+/* escreve o descritor de grupo 'bgd' na imagem 'ext2_image' na posição 'at_position' */
 void write_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* bgd , FILE *ext2_image, uint32_t at_position);
 
 #endif

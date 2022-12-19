@@ -5,6 +5,7 @@
 
 #include "../headers/general-constants.hpp"
 
+/* realiza a leitura dos diretórios contidos dentro do diretório identificado pelo 'inode' */
 vector<Ext2_Directory> read_ext2_directories(FILE* ext2_image, Ext2_Inode* inode) {
 
   vector<Ext2_Directory> directories;
@@ -38,6 +39,7 @@ vector<Ext2_Directory> read_ext2_directories(FILE* ext2_image, Ext2_Inode* inode
   return directories;
 }
 
+/* procura pelo diretório com o nome 'searched_name' entre os diretório contidos dentro do diretório identificado pelo 'inode' */
 Ext2_Directory* search_directory(FILE* ext2_image, Ext2_Inode* inode, const char* searched_name){
   Ext2_Directory* directory = NULL;
 
@@ -54,6 +56,8 @@ Ext2_Directory* search_directory(FILE* ext2_image, Ext2_Inode* inode, const char
   return directory;
 }
 
+/* procura pelo diretório com o nome 'searched_name' entre os diretório contidos dentro do diretório identificado pelo 'inode', 
+informando também a posição do diretório, se encontrado, dentro da imagem. */
 Ext2_Directory* search_directory_and_position(FILE* ext2_image, Ext2_Inode* inode, const char* searched_name, unsigned int* store_position_of_directory_on_block){
   Ext2_Directory* directory = NULL;
 
@@ -77,6 +81,7 @@ Ext2_Directory* search_directory_and_position(FILE* ext2_image, Ext2_Inode* inod
   return directory;
 }
 
+/* realiza a impressão de informações uteis da estrutura de diretório */
 void print_directory(Ext2_Directory directory){
   cout << string(BOLD) <<  directory.name << string(DEFAULT) << endl;
   cout << "inode:\t\t\t" << (unsigned) directory.inode << endl;
@@ -85,6 +90,7 @@ void print_directory(Ext2_Directory directory){
   cout << "file type:\t\t" << (unsigned) directory.file_type << endl;
 }
 
+/* realiza a impressão de informações uteis das estruturas de diretório */
 void print_directories(vector<Ext2_Directory> directories) {
   for(vector<Ext2_Directory>::iterator it = directories.begin(); it != directories.end(); it++){
     print_directory(*it);

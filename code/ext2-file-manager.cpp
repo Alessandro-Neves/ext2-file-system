@@ -10,6 +10,9 @@
 #include "../headers/block-operations.hpp"
 #include "../headers/error.hpp"
 
+/* construtor do gerenciador/manipulador do sistema de arquivos, 
+realiza a inicialização e leitura de informações importantes como o arquivo da imagem 
+e a leitura do diretório principal */
 Ext2FileManager::Ext2FileManager(FILE *ext2_image)
 {
   this->ext2_image = ext2_image;
@@ -20,6 +23,7 @@ Ext2FileManager::Ext2FileManager(FILE *ext2_image)
   this->history_navigation.push_back(directories.at(0));
 }
 
+/* realiza a navegação para um determinado diretório, verificando antes a existência do mesmo e a validade da operação */
 void Ext2FileManager::cd(const char *directory_name)
 {
 
@@ -54,6 +58,7 @@ void Ext2FileManager::cd(const char *directory_name)
   print_directory(this->history_navigation.back());
 }
 
+/* realiza a listagem dos diretórios contidos no diretório referenciado atualmente pela navegação */
 void Ext2FileManager::ls()
 {
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
@@ -62,6 +67,7 @@ void Ext2FileManager::ls()
   print_directories(directories);
 }
 
+/* realiza a criação e inicialização de um novo diretório/arquivos no sistema */
 void Ext2FileManager::touch(const char *directory_name, unsigned int directory_name_length)
 {
 
@@ -121,6 +127,7 @@ void Ext2FileManager::touch(const char *directory_name, unsigned int directory_n
   print_directory(*new_directory);
 }
 
+/* realiza a renomeação de um determina diretório/arquivo contido dentro do diretório referênciado atualmente pela navegação */
 void Ext2FileManager::rename(const char *directory_name, const char *new_directory_name, unsigned int new_directory_name_length)
 {
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
@@ -177,7 +184,7 @@ void Ext2FileManager::rename(const char *directory_name, const char *new_directo
   cout << directory_name << " renamed to " << new_directory_name << endl;
 }
 
-
+/* realiza a remoção de um determinado arquivo, executando antes as verificações necessárias */
 bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name_length, bool info)
 {
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
@@ -224,6 +231,7 @@ bool Ext2FileManager::rm(const char *directory_name, unsigned int directory_name
   if(info) print_directory(*directory_to_remove);
 }
 
+/* realiza a cópia de um determinado arquivo interno para um determinado diretório do sistema do usuário */
 void Ext2FileManager::copy(const char *origin_name, const char *destiny_name, bool info)
 {
 
@@ -250,6 +258,7 @@ void Ext2FileManager::move(const char *origin_name, const char *destiny_name){
   cout << origin_name << " moved to " << destiny_name << endl;
 }
 
+/* realiza a impressão do conteudo contido em uma determinado arquivo */
 void Ext2FileManager::cat(const char *directory_name)
 {
 
@@ -268,11 +277,14 @@ void Ext2FileManager::cat(const char *directory_name)
   print_inode_blocks_content(this->ext2_image, directory_inode);
 }
 
+/* realiza a impressão dos dados do superbloco */
 void Ext2FileManager::info_superblock()
 {
   print_superblock(this->superblock);
 }
 
+/* realiza a impressão dos dados de um determinado descritor de grupo identificado pelo index 
+no bloco de descritores */
 void Ext2FileManager::info_blocks_group_descriptor(int bgd_index)
 {
   uint32_t bgd_absolute_address = block_group_descriptor_address(bgd_index);
@@ -280,39 +292,17 @@ void Ext2FileManager::info_blocks_group_descriptor(int bgd_index)
   print_ext2_blocks_group_descriptor(bgd);
 }
 
+/* realiza a impressão de dados do 'inode' */
 void Ext2FileManager::info_inode(unsigned int inode)
 {
   unsigned int inode_block_group = block_group_from_inode(this->superblock, inode);
   unsigned int bgd = block_group_from_inode(this->superblock, inode);
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor_of_inode = read_ext2_blocks_group_descriptor(this->ext2_image, block_group_descriptor_address(inode_block_group));
-  // print_ext2_blocks_group_descriptor(blocks_group_descriptor_of_inode);
   Ext2_Inode *found_inode = read_ext2_inode(this->ext2_image, blocks_group_descriptor_of_inode, inode_order_on_block_group(this->superblock, inode));
   print_ext2_inode(found_inode);
 }
 
-void Ext2FileManager::print_block_bitmap(unsigned int inode)
-{
-  uint32_t bitmap_absolut_position = BLOCK_OFFSET(this->blocks_group_descriptor->bg_inode_bitmap);
-  unsigned int blocks_per_group = this->superblock->s_blocks_per_group;
-
-  unsigned int bitsmap_size_as_bytes = (blocks_per_group / 8);
-
-  char *bitmap = (char *)malloc(sizeof(char) * bitsmap_size_as_bytes);
-
-  fseek(this->ext2_image, bitmap_absolut_position, SEEK_SET);
-  fread(bitmap, 1, bitsmap_size_as_bytes, this->ext2_image);
-
-  for (int index = 0; index < bitsmap_size_as_bytes; index++)
-    bitmap[index] = reverse_bits(bitmap[index]);
-
-  for (int index = 0; index < bitsmap_size_as_bytes; index++)
-  {
-    if (!(index % 4) && index > 0)
-      std::cout << std::endl;
-    std::cout << std::bitset<8>(bitmap[index]) << " ";
-  }
-}
-
+/* imprime o grupo de 8 bits dentro do inode bitmap ao qual o bit referente ao 'inode' pertence */
 void Ext2FileManager::print_byte_on_bitmap_of_inode(unsigned int inode)
 {
   uint32_t bgd_order = block_group_from_inode(this->superblock, inode);
@@ -325,6 +315,7 @@ void Ext2FileManager::print_byte_on_bitmap_of_inode(unsigned int inode)
   std::cout << string(YELLOW) << index_of_bit << string(DEFAULT) << " " << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
 }
 
+/* imprime o grupo de 8 bits dentro do block bitmap ao qual o bit referente ao 'block' pertence */
 void Ext2FileManager::print_byte_on_bitmap_of_block(unsigned int block)
 {
   uint32_t bgd_order = block_group_from_block(this->superblock, block);
@@ -337,6 +328,8 @@ void Ext2FileManager::print_byte_on_bitmap_of_block(unsigned int block)
   std::cout << string(YELLOW) << index_of_bit << string(DEFAULT) << " " << std::bitset<8>(reverse_bits(byte_of_bitmap)) << std::endl;
 }
 
+/* seta o bit de um determinado 'inode' no bitmap, realizado as verificações, 
+e atualizado os valores do superbloco e do descritor de grupo (inodes livres) */
 void Ext2FileManager::set_bit_of_inode_bitmap(unsigned int inode, bool value)
 {
   uint32_t bgd_order = block_group_from_inode(this->superblock, inode);
@@ -359,6 +352,8 @@ void Ext2FileManager::set_bit_of_inode_bitmap(unsigned int inode, bool value)
   write_ext2_superblock(this->superblock, this->ext2_image);
 }
 
+/* seta o bit de um determinado bloco no bitmap, realizado as verificações, 
+e atualizado os valores do superbloco e do descritor de grupo (blocos livres) */
 void Ext2FileManager::set_bit_of_block_bitmap(unsigned int block, bool value)
 {
   uint32_t bgd_order = block_group_from_block(this->superblock, block);
@@ -382,6 +377,7 @@ void Ext2FileManager::set_bit_of_block_bitmap(unsigned int block, bool value)
   write_ext2_superblock(this->superblock, this->ext2_image);
 }
 
+/* constroi uma string que informa o caminha 'path' do diretório atual referênciado pela navegação */
 std::string Ext2FileManager::pwd()
 {
   std::string str;
@@ -395,6 +391,7 @@ std::string Ext2FileManager::pwd()
   return str;
 }
 
+/* realiza a leitura de um determinado 'inode' na imagem */
 Ext2_Inode *Ext2FileManager::_read_ext2_inode(uint32_t inode)
 {
   unsigned int bgd_order = block_group_from_inode(this->superblock, inode);
@@ -403,6 +400,7 @@ Ext2_Inode *Ext2FileManager::_read_ext2_inode(uint32_t inode)
   return read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, inode_order));
 }
 
+/* realiza a liberação 'free' dos blocos do array 'blocks' */
 void Ext2FileManager::release_blocks(uint32_t *blocks, int blocks_size, uint32_t *bytes_to_remove)
 {
   for (int i = 0; i < blocks_size && (*bytes_to_remove) > 0; i++)
@@ -415,6 +413,7 @@ void Ext2FileManager::release_blocks(uint32_t *blocks, int blocks_size, uint32_t
   }
 }
 
+/* realiza a liberação 'free' dos blocos utilizados por um determinado 'inode' */
 void Ext2FileManager::release_blocks_of_inode(Ext2_Inode *inode)
 {
   uint32_t bytes_to_remove = inode->i_size;
@@ -465,6 +464,7 @@ void Ext2FileManager::release_blocks_of_inode(Ext2_Inode *inode)
   }
 }
 
+/* realiza a impressão de das permissões, tipo e dados básicos de um diretório/arquivo */
 void Ext2FileManager::attr(const char *directory_name){
   Ext2_Directory actual_directory = this->history_navigation.at(this->history_navigation.size() - 1);
   Ext2_Inode *actual_inode = read_ext2_inode(this->ext2_image, this->blocks_group_descriptor, inode_order_on_block_group(this->superblock, actual_directory.inode));
@@ -492,6 +492,7 @@ void Ext2FileManager::attr(const char *directory_name){
   print_time_from_unix((unsigned)directory_inode->i_mtime);
 }
 
+/* realiza a impressão de dados importantes do sistema de arquivos */
 void Ext2FileManager::info(){
   uint32_t g_count = this->superblock->s_blocks_per_group/BLOCK_SIZE;
   uint32_t i_table = this->superblock->s_inodes_per_group/g_count;
