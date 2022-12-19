@@ -22,9 +22,9 @@ int main()
   {
     /* pegar endereço da image ext2 no host */
     char *input = (char *)malloc(sizeof(char) * 100);
-    // cout << "[ Image address ]:\t";
-    // cin >> input;
-    strcpy(input, "./ext2.img"); /* !!!! apagar antes de entregar e descomentar as duas linhas anteriores !!!! */
+    cout << "[ Image address ]:\t";
+    cin >> input;
+    //strcpy(input, "./ext2.img"); /* !!!! apagar antes de entregar e descomentar as duas linhas anteriores !!!! */
 
     /* ler imagem ext2 do host */
     ext2_image = get_file((const char *)input);
@@ -52,12 +52,12 @@ int main()
 void shell(Ext2FileManager *fm)
 {
   std::string input, operation, argument;
+  std::getline(std::cin, input);
 
   while (1)
   {
     try
     {
-      fflush(stdout);
       std::cout << std::endl
                 << "[ " << fm->pwd() << " ]>  " << string(BLUE);
       std::getline(std::cin, input);
