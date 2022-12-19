@@ -15,8 +15,11 @@ private:
   Ext2_Blocks_Group_Descriptor *blocks_group_descriptor = NULL;
   vector<Ext2_Directory> history_navigation;
 
-  void release_blocks(uint32_t *blocks, int blocks_size, uint32_t *bytes_to_remove);
+  /* realiza a liberação 'free' dos blocos utilizados por um determinado 'inode' */
   void release_blocks_of_inode(Ext2_Inode *inode);
+
+  /* realiza a liberação 'free' dos blocos do array 'blocks' */
+  void release_blocks(uint32_t *blocks, int blocks_size, uint32_t *bytes_to_remove);
 
   /* realiza a leitura de um determinado 'inode' na imagem */
   Ext2_Inode *_read_ext2_inode(uint32_t inode);
@@ -28,7 +31,6 @@ public:
   e a leitura do diretório principal */
   Ext2FileManager(FILE *ext2_image);
 
-
   /* realiza a impressão dos dados do superbloco */
   void info_superblock();
 
@@ -39,9 +41,11 @@ public:
   /* realiza a impressão de dados do 'inode' */
   void info_inode(unsigned int inode);
 
-  
-  void attr(const char *directory_name);
+  /* realiza a impressão de dados importantes do sistema de arquivos */
   void info();
+
+  /* realiza a impressão de das permissões, tipo e dados básicos de um diretório/arquivo */
+  void attr(const char *directory_name);
 
   /* realiza a navegação para um determinado diretório, verificando antes a existência do mesmo e a validade da operação */
   void cd(const char *directory_name);

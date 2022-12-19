@@ -6,6 +6,7 @@
 
 using namespace std;
 
+/* realiza a leitura de um arquivo na máquina do usuário */
 FILE *get_file(const char *address)
 {
   FILE *file = fopen(address, "rb+");
@@ -20,6 +21,8 @@ FILE *get_file(const char *address)
   return file;
 }
 
+/* realiza a movimentação 'shift' de uma determinado porção de bytes na imagem 
+(!! será utilizado futuramente) */
 void shift_bytes(FILE *ext2_image, uint32_t position, unsigned int qtd_bytes, unsigned int offset)
 {
   try

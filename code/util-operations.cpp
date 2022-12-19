@@ -3,6 +3,7 @@
 #include "../headers/util-operations.hpp"
 #include "../headers/colors.hpp"
 
+/* informa se algum elemento do 'array' é null ou zero ou '\0'  */
 bool has_null(const char *array, int size)
 {
   for (int i = 0; i < size; i++)
@@ -11,6 +12,8 @@ bool has_null(const char *array, int size)
   return false;
 }
 
+/* informa o quantidade minima multiplo de 4 capas de armazenar determinada 
+quantidade de bytes */
 unsigned int bytes_to_4_bytes_groups_length(unsigned int bytes)
 {
   const unsigned int base = bytes / 4;
@@ -18,7 +21,7 @@ unsigned int bytes_to_4_bytes_groups_length(unsigned int bytes)
   return (bytes - (base * 4)) > 0 ? default_size + 4 : default_size;
 }
 
-// Função para inverter a ordem dos bits de um char
+// inverter a ordem dos bits de um char
 char reverse_bits(char c)
 {
   char inverted = 0;
@@ -30,7 +33,7 @@ char reverse_bits(char c)
   return inverted;
 }
 
-// Função para setar um determinado bit do char para 0 ou para 1
+// setar um determinado bit do char para 0 ou para 1
 char set_bit(char c, int index, bool value)
 {
   if (value)
@@ -51,16 +54,20 @@ int find_first_zero_bit(char c)
   return -1; // Nenhum bit 0 encontrado
 }
 
-bool directory_exists(const char *name)
+/* informa se o diretório na caminho 'path' existe no sistema do usuário */
+bool directory_exists(const char *path)
 {
   struct stat st;
-  if (stat(name, &st) == 0 && (st.st_mode & S_IFDIR))
+  if (stat(path, &st) == 0 && (st.st_mode & S_IFDIR))
     return true;
   else
     return false;
 }
 
 
+/* imprime o Unix timestemp 'tempo' no formato dia/mes/ano hora:minuto 
+!!! retornando a terceira linha abaixo para evitar um bug encontrado que 
+acontece em alguma máquinas Linux (o programa executando interrompe a execução) */
 void print_time_from_unix(unsigned int tempo)
 {
     std::cout << tempo << std::endl;  return;

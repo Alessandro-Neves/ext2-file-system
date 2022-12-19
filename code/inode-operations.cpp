@@ -11,15 +11,14 @@
 
 using namespace std;
 
+/* realiza a impressão do array de index principal do inode */
 void print_array(uint32_t *array, int size)
 {
   for (int i = 0; i < size; i++)
     cout << "pointer[" << i << "]:  " << array[i] << endl;
 }
 
-/**
- * le o nº inode do grupo de bloco
- */
+/* realiza a leitura de um determina inode referenciado na tabela de inodes do descritor de grupo */
 Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, unsigned int inode_order)
 {
 
@@ -33,6 +32,7 @@ Ext2_Inode *read_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *bloc
   return inode;
 }
 
+/* escreve o inode na imagem */
 void write_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_group_descriptor, unsigned int inode_order)
 {
 
@@ -45,15 +45,13 @@ void write_ext2_inode(FILE *ext2_image, Ext2_Blocks_Group_Descriptor *block_grou
   fwrite(inode, 1, sizeof(Ext2_Inode), ext2_image);
 }
 
-/**
- * retorna a ordem do inode dentro do descritor de grupo
- * Obs: Para o primeiro inode do descritor retorna 1
- */
+/* retorna a ordem (cardinalidade) do inode dentro do descritor de grupo */
 unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t inode)
 {
   return (unsigned int)inode % superblock->s_inodes_per_group;
 }
 
+/* realiza a impressão dos dados do 'inode' */
 void print_ext2_inode(Ext2_Inode *inode)
 {
   cout << "file format and access rights:  " << "0x" << std::hex << (unsigned)inode->i_mode << std::dec << endl;
@@ -75,11 +73,13 @@ void print_ext2_inode(Ext2_Inode *inode)
   cout << "location file fragment:  " << (unsigned)inode->i_faddr << endl;
 }
 
+/* retorna a ultima posição da porção de bytes para ler (primeira posição não utilizado com dado util) */
 static unsigned int last_position_of_content_on_block(unsigned int bytes_to_read)
 {
   return bytes_to_read >= BLOCK_SIZE ? BLOCK_SIZE : bytes_to_read;
 }
 
+/* realiza a cópia dos dados dos blocos referenciados pelos 'indexes' e o armazenam no arquivo 'destiny' */
 bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, unsigned int *bytes_to_read, unsigned int *blocks_read, ofstream *destiny, bool binary)
 {
   char *content = (char *)malloc(sizeof(char) * BLOCK_SIZE);
@@ -111,6 +111,7 @@ bool copy_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, 
   return true;
 }
 
+/* realiza a cópia dos blocos de dados do 'inode' para o arquivo indicado por 'file_name' */
 void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char *file_name, const char *path_destiny)
 {
   unsigned int bytes_to_read = inode->i_size;
@@ -192,6 +193,7 @@ void copy_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode, const char *
   }
 }
 
+/* realiza a impressão dos conteudos dos blocos em 'indexes' e informar se existe mais conteudo a ser lido */
 bool _print_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes, unsigned int *bytes_to_read, unsigned int *blocks_read, unsigned int total)
 {
   char *content = (char *)malloc(sizeof(char) * (BLOCK_SIZE + 1));
@@ -199,31 +201,10 @@ bool _print_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes
 
   bool exit = false;
 
-  // system("clear");
-  // cout << string(BLUE) << "[ " << ((*blocks_read) / 10) + 1 << " of " << (*bytes_to_read) / ((BLOCK_SIZE * 10)) + 1 << " ]" << string(DEFAULT) << endl
-  //      << endl;
-
   for (int i = 0; i < qtd_indexes; i++)
   {
     if ((*bytes_to_read) <= BLOCK_SIZE)
       exit = true;
-
-    // if ((*blocks_read) % 10 == 0 && (*blocks_read) > 0)
-    // {
-    //   cout << string(GREEN) << endl
-    //        << "[ press ANY key to read more, ESQ to exit ]\t" << string(DEFAULT);
-    //   system("stty raw");
-    //   if (getchar() == 27)
-    //   {
-    //     system("stty cooked");
-    //     system("clear");
-    //     return false;
-    //   }
-    //   system("stty cooked");
-    //   system("clear");
-    //   cout << string(BLUE) << "[ " << (*blocks_read / 10) + 1 << " of " << total / ((BLOCK_SIZE * 10)) + 1 << " ]" << string(DEFAULT) << endl
-    //        << endl;
-    // }
 
     position = BLOCK_OFFSET(indexes[i]);
     fseek(ext2_image, position, SEEK_SET);
@@ -233,13 +214,7 @@ bool _print_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes
 
     cout << content;
 
-    if (exit)
-    {
-      // cout << string(YELLOW) << "[ end of file, press any key to exit ]\t" << string(DEFAULT);
-      // cin.get();
-      // system("clear");
-      return false;
-    };
+    if (exit) return false;
     (*bytes_to_read) -= 1024;
     (*blocks_read)++;
   }
@@ -247,6 +222,7 @@ bool _print_array_of_blocks(FILE *ext2_image, uint32_t *indexes, int qtd_indexes
   return true;
 }
 
+/* realiza a impressão do conteudo dos blocos de dados do 'inode' */
 void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
 {
   unsigned int bytes_to_read = inode->i_size;
@@ -305,6 +281,7 @@ void print_inode_blocks_content(FILE *ext2_image, Ext2_Inode *inode)
   }
 }
 
+/* cria uma estrutura de inode padrão */
 Ext2_Inode *create_default_inode()
 {
   Ext2_Inode *inode = (Ext2_Inode *)calloc(1, sizeof(Ext2_Inode));
@@ -331,6 +308,7 @@ Ext2_Inode *create_default_inode()
   return inode;
 }
 
+/* retorna um determinado grupo de 8 bits (char) do bitmap de inodo do descritor de grupo referênciado  */
 char get_byte_of_inode_bitmap(Ext2_Blocks_Group_Descriptor *bgd, uint32_t byte_index, FILE *ext2_image)
 {
   uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
@@ -343,6 +321,7 @@ char get_byte_of_inode_bitmap(Ext2_Blocks_Group_Descriptor *bgd, uint32_t byte_i
   return byte;
 }
 
+/* escreve o grupo de bits (char) no bitmap de inode do descritor de grupo referênciado */
 void set_byte_on_inode_bitmap(char byte, Ext2_Blocks_Group_Descriptor *bgd, uint32_t byte_order, FILE *ext2_image)
 {
   uint32_t absolut_bitmap_position = BLOCK_OFFSET(bgd->bg_inode_bitmap);
@@ -352,6 +331,7 @@ void set_byte_on_inode_bitmap(char byte, Ext2_Blocks_Group_Descriptor *bgd, uint
   fwrite(&byte, 1, 1, ext2_image);
 }
 
+/* encontra um inode livre para ser utilizado no sistema */
 uint32_t find_free_inode(Ext2_Superblock *superblock, FILE *ext2_image)
 {
 
@@ -379,6 +359,7 @@ uint32_t find_free_inode(Ext2_Superblock *superblock, FILE *ext2_image)
   return -1;
 }
 
+/* constroi uma string que informa permissões, tipo e dados básicos de um diretório/arquivo a partir do i_mode */
 std::string permission_i_mode(uint32_t i_mode)
 {
   std::string str;

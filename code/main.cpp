@@ -11,6 +11,44 @@
 
 #include "../headers/util-operations.hpp"
 
+void shell(Ext2FileManager *fm);
+
+int main()
+{
+  FILE *ext2_image;
+  Ext2FileManager *fm;
+
+  try
+  {
+    /* pegar endereço da image ext2 no host */
+    char *input = (char *)malloc(sizeof(char) * 100);
+    // cout << "[ Image address ]:\t";
+    // cin >> input;
+    strcpy(input, "./ext2.img"); /* !!!! apagar antes de entregar e descomentar as duas linhas anteriores !!!! */
+
+    /* ler imagem ext2 do host */
+    ext2_image = get_file((const char *)input);
+
+    fm = new Ext2FileManager(ext2_image);
+
+    shell(fm);
+  }
+  catch (const char *str) /* tratamento de exceções */
+  {
+    cout << string(RED) << str << string(DEFAULT) << endl;
+  }
+  catch (Error *error)
+  {
+    cout << endl
+         << string(RED) << "[ error::" << error->message << " ]" << string(DEFAULT) << endl;
+  }
+
+  return 0;
+}
+
+
+
+/* shell de iteração com o usuário */
 void shell(Ext2FileManager *fm)
 {
   std::string input, operation, argument;
@@ -180,37 +218,4 @@ void shell(Ext2FileManager *fm)
       std::cout << file_manager_info->message << endl;
     }
   }
-}
-
-int main()
-{
-  FILE *ext2_image;
-  Ext2FileManager *fm;
-
-  try
-  {
-    /* pegar endereço da image ext2 no host */
-    char *input = (char *)malloc(sizeof(char) * 100);
-    // cout << "[ Image address ]:\t";
-    // cin >> input;
-    strcpy(input, "./ext2.img"); /* !!!! apagar antes de entregar e descomentar as duas linhas anteriores !!!! */
-
-    /* ler imagem ext2 do host */
-    ext2_image = get_file((const char *)input);
-
-    fm = new Ext2FileManager(ext2_image);
-
-    shell(fm);
-  }
-  catch (const char *str) /* tratamento de exceções */
-  {
-    cout << string(RED) << str << string(DEFAULT) << endl;
-  }
-  catch (Error *error)
-  {
-    cout << endl
-         << string(RED) << "[ error::" << error->message << " ]" << string(DEFAULT) << endl;
-  }
-
-  return 0;
 }

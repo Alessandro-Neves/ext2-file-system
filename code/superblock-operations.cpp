@@ -5,6 +5,7 @@
 
 using namespace std;
 
+/* realiza a leitura do superbloco do sistema de arquivos e mapeia para Ext2_Superblock */
 Ext2_Superblock *read_ext2_superblock(FILE *ext2_image)
 {
 
@@ -21,12 +22,14 @@ Ext2_Superblock *read_ext2_superblock(FILE *ext2_image)
     return superblock;
 }
 
+/* escreve a estrutura de superbloco na imagem do sistema de arquivos */
 void write_ext2_superblock(Ext2_Superblock *superblock, FILE *ext2_image)
 {
     fseek(ext2_image, 1024, SEEK_SET);
     fwrite(superblock, 1, sizeof(Ext2_Superblock), ext2_image);
 }
 
+/* formata a string para substituir caracteres não impriveis e especiais para '-' */
 void format_str(const char *str)
 {
     std::string s(str);
@@ -38,6 +41,7 @@ void format_str(const char *str)
     }
 }
 
+/* realiza a impressão dos dados do superbloco */
 void print_superblock(Ext2_Superblock *superblock)
 {
     cout << "inodes count:  " << (unsigned)superblock->s_inodes_count << endl;
