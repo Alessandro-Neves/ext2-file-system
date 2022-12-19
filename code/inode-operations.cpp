@@ -56,7 +56,7 @@ unsigned int inode_order_on_block_group(Ext2_Superblock *superblock, uint32_t in
 
 void print_ext2_inode(Ext2_Inode *inode)
 {
-  cout << "i_mode:  " << "0x" << std::hex << (unsigned)inode->i_mode << std::dec << endl;
+  cout << "file format and access rights:  " << "0x" << std::hex << (unsigned)inode->i_mode << std::dec << endl;
   cout << "user_id:  " << (unsigned)inode->i_uid << endl;
   cout << "lower 32-bit file size:  " << (unsigned)inode->i_size << endl;
   cout << "access time:   " << (unsigned)inode->i_atime << endl;

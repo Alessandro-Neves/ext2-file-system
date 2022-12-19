@@ -19,13 +19,12 @@ Ext2_Blocks_Group_Descriptor *read_ext2_blocks_group_descriptor(FILE *ext2_image
 
 
 void print_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* blocks_group_descriptor) {
-  cout << "bg_block_bitmap:\t\t"          << blocks_group_descriptor->bg_block_bitmap              << endl;
-  cout << "bg_inode_bitmap:\t\t"          << blocks_group_descriptor->bg_inode_bitmap              << endl;
-  cout << "bg_inode_table:\t\t\t"         << blocks_group_descriptor->bg_inode_table               << endl;
-  cout << "bg_free_blocks_count:\t\t"     << blocks_group_descriptor->bg_free_blocks_count         << endl;
-  cout << "bg_free_inodes_count:\t\t"     << blocks_group_descriptor->bg_free_inodes_count         << endl;
-  cout << "bg_used_dirs_count:\t\t"       << blocks_group_descriptor->bg_used_dirs_count           << endl;
-  cout << "bg_pad:\t\t\t\t"               << blocks_group_descriptor->bg_pad                       << endl;
+  cout << "block bitmap:\t\t"          << blocks_group_descriptor->bg_block_bitmap              << endl;
+  cout << "inode bitmap:\t\t"          << blocks_group_descriptor->bg_inode_bitmap              << endl;
+  cout << "inode table:\t\t"         << blocks_group_descriptor->bg_inode_table               << endl;
+  cout << "free blocks count:\t"     << blocks_group_descriptor->bg_free_blocks_count         << endl;
+  cout << "free inodes count:\t"     << blocks_group_descriptor->bg_free_inodes_count         << endl;
+  cout << "used dirs count:\t"       << blocks_group_descriptor->bg_used_dirs_count           << endl;
 }
 
 void write_ext2_blocks_group_descriptor(Ext2_Blocks_Group_Descriptor* bgd , FILE *ext2_image, uint32_t at_position) {
